@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เว็บไซต์การศึกษา: แรงลัพธ์ - คู่มือการใช้งาน</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN for charts in the infographic section -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts - Kanit for Thai typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            scroll-behavior: smooth;
+            margin: 0;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 9999px; /* Rounded pill shape */
+            transition: background-color 0.3s ease;
+        }
+        .nav-link.active, .nav-link:hover {
+            background-color: #00A6ED; /* Active/hover background */
+            color: white;
+        }
+        .section {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            border: 1px solid #e2e8f0;
+        }
+        .section-header {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0077b6;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        /* Styles for infographic section */
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05), 0 6px 6px rgba(0, 0, 0, 0.07);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08), 0 8px 8px rgba(0, 0, 0, 0.1);
+        }
+        .step-arrow {
+            color: #FFB300;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+
+        /* --- Animations --- */
+
+        /* Fade in and slide up for sections/cards */
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* Fade in and slight slide-down for the main header */
+        @keyframes fadeInSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Fade in for general elements */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Staggered animation delays */
+        .animated-delay-1 { animation-delay: 0.2s; }
+        .animated-delay-2 { animation-delay: 0.3s; }
+        .animated-delay-3 { animation-delay: 0.4s; }
+        .animated-delay-4 { animation-delay: 0.5s; }
+        .animated-delay-5 { animation-delay: 0.6s; }
+        .animated-delay-6 { animation-delay: 0.7s; }
+        .animated-delay-7 { animation-delay: 0.8s; }
+        .animated-delay-8 { animation-delay: 0.9s; }
+        .animated-delay-9 { animation-delay: 1.0s; }
+        .animated-delay-10 { animation-delay: 1.1s; }
+        .animated-delay-11 { animation-delay: 1.2s; }
+        .animated-delay-12 { animation-delay: 1.3s; }
+
+        /* General animation class for elements that animate on load */
+        .animate-on-load {
+            opacity: 0; /* Start hidden */
+            animation-fill-mode: forwards; /* Keep the end state of the animation */
+        }
+
+        /* Specific animation for step arrows */
+        @keyframes bounceArrow {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0) rotate(90deg); /* Start and end position */
+            }
+            40% {
+                transform: translateY(-10px) rotate(90deg); /* Move up */
+            }
+            60% {
+                transform: translateY(-5px) rotate(90deg); /* Move up less */
+            }
+        }
+        .step-arrow.animated {
+            animation: bounceArrow 1.5s infinite;
+        }
+
+        /* Staggered slide in for the 'How it works' section cards */
+        @keyframes slideInFromLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes slideInFromRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .animated-slide-left {
+            animation: slideInFromLeft 0.8s ease-out forwards;
+            opacity: 0;
+        }
+        .animated-slide-right {
+            animation: slideInFromRight 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        /* Text color hover effects for sections */
+        .purpose-text:hover { color: #5a2e9b; } /* Darker purple for purpose */
+        .component-text:hover { color: #5a2e9b; } /* Darker purple for components */
+        .step-text:hover { color: #5a2e9b; } /* Darker purple for steps */
+        .quiz-text:hover { color: #5a2e9b; } /* Darker purple for quiz */
+        .experiment-text:hover { color: #5a2e9b; } /* Darker purple for experiments */
+        .takeaway-text:hover { color: #5a2e9b; } /* Darker purple for takeaways */
+
+        /* Smooth scroll to section when nav link is clicked */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-lg py-4 fixed top-0 w-full z-50">
+        <div class="container flex justify-center space-x-6">
+            <a href="index.html" class="nav-link text-gray-700 font-semibold">หน้าแรก</a>
+            <a href="manual.html" class="nav-link text-gray-700 font-semibold active">คู่มือการใช้งานแบบจำลอง</a>
+            <a href="simulation.html" class="nav-link text-gray-700 font-semibold">แบบจำลองแรงลัพธ์</a>
+        </div>
+    </nav>
+
+    <div class="container mt-20"> <!-- Added mt-20 to account for fixed nav bar -->
+
+        <!-- Section: User Manual (Infographic) -->
+        <section id="manual" class="section animate-on-load animated-delay-1" style="animation-name: fadeInSlideUp;">
+            <h1 class="section-header animate-on-load animated-delay-2" style="animation-name: fadeInSlideDown;">คู่มือการใช้งาน: การจำลองการดึงเชือก (ฉบับอินโฟกราฟิก)</h1>
+            <header class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-bold text-[#00A6ED] mb-2 animate-on-load animated-delay-3" style="animation-name: fadeIn;">สำรวจโลกของ "แรงลัพธ์"</h1>
+                <p class="text-lg md:text-xl text-[#3D3D3D] animate-on-load animated-delay-4" style="animation-name: fadeIn;">ผ่าน Simulation การดึงเชือกที่เข้าใจง่ายและสนุกสนาน</p>
+                <p class="text-3xl mt-4 animate-on-load animated-delay-5" style="animation-name: fadeIn;">🧍🧍‍♀️</p>
+            </header>
+
+            <main class="space-y-16">
+
+                <section id="purpose" class="card p-6 md:p-8 animate-on-load animated-delay-6" style="animation-name: fadeInSlideUp;">
+                    <h2 class="text-2xl md:text-3xl font-bold text-center mb-4 text-[#7542B4] purpose-text">🎯 จุดประสงค์การเรียนรู้</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">
+                        <div class="p-4 bg-blue-50 rounded-lg animate-on-load animated-delay-7" style="animation-name: fadeInSlideUp;">
+                            <p class="text-5xl mb-2">💡</p>
+                            <h3 class="font-semibold text-lg">เข้าใจแนวคิดแรงลัพธ์</h3>
+                            <p class="text-gray-600">เรียนรู้ว่าแรงลัพธ์คืออะไรและส่งผลต่อการเคลื่อนที่อย่างไร</p>
+                        </div>
+                        <div class="p-4 bg-red-50 rounded-lg animate-on-load animated-delay-8" style="animation-name: fadeInSlideUp;">
+                            <p class="text-5xl mb-2">⚖️</p>
+                            <h3 class="font-semibold text-lg">แรงสมดุล vs ไม่สมดุล</h3>
+                            <p class="text-gray-600">เห็นภาพความแตกต่างและผลลัพธ์ของแรงทั้งสองประเภท</p>
+                        </div>
+                        <div class="p-4 bg-yellow-50 rounded-lg animate-on-load animated-delay-9" style="animation-name: fadeInSlideUp;">
+                            <p class="text-5xl mb-2">🧮</p>
+                            <h3 class="font-semibold text-lg">ฝึกทักษะการคำนวณ</h3>
+                            <p class="text-gray-600">ทดลองคำนวณแรงลัพธ์จากสถานการณ์ต่างๆ ด้วยตัวเอง</p>
+                        </div>
+                        <div class="p-4 bg-green-50 rounded-lg animate-on-load animated-delay-10" style="animation-name: fadeInSlideUp;">
+                            <p class="text-5xl mb-2">🏃</p>
+                            <h3 class="font-semibold text-lg">เห็นภาพการเคลื่อนที่</h3>
+                            <p class="text-gray-600">สังเกตผลการรวมแรงที่เกิดขึ้นจริงกับวัตถุ</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="how-it-works" class="card p-6 md:p-8 animate-on-load animated-delay-11" style="animation-name: fadeInSlideUp;">
+                    <h2 class="text-2xl md:text-3xl font-bold text-center mb-6 text-[#7542B4] component-text">🧩 ส่วนประกอบของ Simulation</h2>
+                    <div class="relative p-4 border-2 border-dashed border-gray-300 rounded-lg">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="lg:col-span-1 space-y-4 animated-slide-left animated-delay-12">
+                                <div class="p-4 bg-gray-100 rounded-lg text-center">
+                                    <span class="text-2xl">🔢</span>
+                                    <h4 class="font-semibold">ช่องป้อนข้อมูล</h4>
+                                    <p class="text-sm text-gray-600">กำหนดจำนวนคนและแรงดึง</p>
+                                </div>
+                                <div class="p-4 bg-gray-100 rounded-lg text-center">
+                                    <span class="text-2xl">🔘</span>
+                                    <h4 class="font-semibold">ปุ่มควบคุม</h4>
+                                    <p class="text-sm text-gray-600">เริ่ม/รีเซ็ต/เริ่มแบบทดสอบ</p>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-1 flex flex-col items-center justify-center space-y-2 animated-fade-in animated-delay-12">
+                                <div class="p-4 bg-gray-100 rounded-lg text-center w-full">
+                                    <span class="text-2xl">🧍</span>
+                                    <h4 class="font-semibold">ตัวละคร</h4>
+                                    <p class="text-sm text-gray-600">แสดงผู้เล่นแต่ละฝั่ง</p>
+                                </div>
+                                <div class="p-4 bg-gray-100 rounded-lg text-center w-full">
+                                    <span class="text-2xl">🪢</span>
+                                    <h4 class="font-semibold">เชือก</h4>
+                                    <p class="text-sm text-gray-600">วัตถุที่แสดงการเคลื่อนที่</p>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-1 space-y-4 animated-slide-right animated-delay-12">
+                                <div class="p-4 bg-gray-100 rounded-lg text-center">
+                                    <span class="text-2xl">📊</span>
+                                    <h4 class="font-semibold">กล่องคำนวณ</h4>
+                                    <p class="text-sm text-gray-600">สรุปผลและทิศทาง</p>
+                                </div>
+                                <div class="p-4 bg-gray-100 rounded-lg text-center">
+                                    <span class="text-2xl">🟦🟥🟩</span>
+                                    <h4 class="font-semibold">ลูกศรแสดงแรง</h4>
+                                    <p class="text-sm text-gray-600">แสดงทิศทางและขนาดของแรง</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="steps" class="text-center animate-on-load animated-delay-1" style="animation-name: fadeInSlideUp;">
+                    <h2 class="text-2xl md:text-3xl font-bold text-center mb-6 text-[#7542B4] step-text">▶️ 3 ขั้นตอนง่ายๆ เพื่อการค้นพบ</h2>
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+                        <div class="card p-6 w-full md:w-1/3 animate-on-load animated-delay-2" style="animation-name: fadeInSlideUp;">
+                            <p class="text-5xl text-[#00A6ED]">1</p>
+                            <h3 class="font-semibold text-lg mt-2">ป้อนข้อมูล</h3>
+                            <p class="text-gray-600">ใส่จำนวนคนและแรงที่ต้องการทดลอง</p>
+                        </div>
+                        <p class="text-4xl font-bold step-arrow transform md:-rotate-0 rotate-90 animated"></p>
+                        <div class="card p-6 w-full md:w-1/3 animate-on-load animated-delay-3" style="animation-name: fadeInSlideUp;">
+                            <p class="text-5xl text-[#F2545B]">2</p>
+                            <h3 class="font-semibold text-lg mt-2">กด "เริ่ม"</h3>
+                            <p class="text-gray-600">ให้ระบบเริ่มคำนวณแรงทั้งหมด</p>
+                        </div>
+                        <p class="text-4xl font-bold step-arrow transform md:-rotate-0 rotate-90 animated"></p>
+                        <div class="card p-6 w-full md:w-1/3 animate-on-load animated-delay-4" style="animation-name: fadeInSlideUp;">
+                            <p class="text-5xl text-[#FFB300]">3</p>
+                            <h3 class="font-semibold text-lg mt-2">สังเกตผล</h3>
+                            <p class="text-gray-600">ดูการเคลื่อนที่ของเชือกและผลคำนวณ</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="quiz-usage" class="text-center animate-on-load animated-delay-5" style="animation-name: fadeInSlideUp;">
+                    <h2 class="text-2xl md:text-3xl font-bold text-center mb-6 text-[#7542B4] quiz-text">📝 การใช้งานแบบทดสอบ (Quiz)</h2>
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+                        <div class="card p-6 w-full md:w-1/3 animate-on-load animated-delay-6" style="animation-name: fadeInSlideUp;">
+                            <p class="text-5xl text-[#7542B4]">1</p>
+                            <h3 class="font-semibold text-lg mt-2">เริ่มแบบทดสอบ</h3>
+                            <p class="text-gray-600">คลิกปุ่ม "เริ่มแบบทดสอบ" ในหน้าซิมูเลชัน</p>
+                        </div>
+                        <p class="text-4xl font-bold step-arrow transform md:-rotate-0 rotate-90 animated"></p>
+                        <div class="card p-6 w-full md:w-1/3 animate-on-load animated-delay-7" style="animation-name: fadeInSlideUp;">
+                            <p class="text-5xl text-[#00A6ED]">2</p>
+                            <h3 class="font-semibold text-lg mt-2">ตอบคำถาม</h3>
+                            <p class="text-gray-600">เลือกคำตอบที่ถูกต้องแล้วคลิก "คำถามถัดไป"</p>
+                        </div>
+                        <p class="text-4xl font-bold step-arrow transform md:-rotate-0 rotate-90 animated"></p>
+                        <div class="card p-6 w-full md:w-1/3 animate-on-load animated-delay-8" style="animation-name: fadeInSlideUp;">
+                            <p class="text-5xl text-[#00B06B]">3</p>
+                            <h3 class="font-semibold text-lg mt-2">ดูผลคะแนน</h3>
+                            <p class="text-gray-600">คลิก "ส่งคำตอบ" ในข้อสุดท้ายเพื่อดูคะแนน</p>
+                        </div>
+                    </div>
+                    <div class="card p-6 md:p-8 mt-8 animate-on-load animated-delay-9" style="animation-name: fadeInSlideUp;">
+                        <p class="text-xl font-bold text-center text-[#F2545B] mb-2">🎉 มีทั้งหมด 10 คำถาม!</p>
+                        <p class="text-gray-600">ทบทวนความรู้ของคุณหลังจากได้ทดลองใช้ซิมูเลชัน</p>
+                    </div>
+                </section>
+
+
+                <section id="experiments" class="animate-on-load animated-delay-10" style="animation-name: fadeInSlideUp;">
+                    <h2 class="text-2xl md:text-3xl font-bold text-center mb-8 text-[#7542B4] experiment-text">🧠 ทดลองและเรียนรู้ผ่านตัวอย่าง</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-1 gap-8">
+
+                        <div class="card p-6 md:p-8 animate-on-load animated-delay-11" style="animation-name: fadeInSlideUp;">
+                            <h3 class="text-xl font-bold text-center text-[#00A6ED] mb-4">สถานการณ์ที่ 1: แรงไม่สมดุล (ชนะฝั่งซ้าย)</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                                <div>
+                                    <p class="text-gray-600 mb-2">เมื่อฝั่งซ้ายมีแรงมากกว่า (15 N) ฝั่งขวา (10 N) แรงลัพธ์จึงมีค่าเป็นบวก และทำให้เชือกเคลื่อนที่ไปทางซ้าย</p>
+                                    <div class="bg-blue-100 p-4 rounded-lg text-center">
+                                        <p class="text-lg font-semibold">แรงลัพธ์</p>
+                                        <p class="text-4xl font-bold text-[#00A6ED]">+5 N</p>
+                                        <p class="font-semibold">ทิศทาง: ไปทางซ้าย</p>
+                                    </div>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="chart1"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card p-6 md:p-8 animate-on-load animated-delay-12" style="animation-name: fadeInSlideUp;">
+                            <h3 class="text-xl font-bold text-center text-gray-500 mb-4">สถานการณ์ที่ 2: แรงสมดุล</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                                <div>
+                                    <p class="text-gray-600 mb-2">เมื่อทั้งสองฝั่งออกแรงเท่ากัน (10 N) แรงลัพธ์จึงเป็นศูนย์ แรงจะอยู่ในสภาวะ "สมดุล" และเชือกจะไม่เคลื่อนที่ไปไหนเลย</p>
+                                    <div class="bg-gray-100 p-4 rounded-lg text-center">
+                                        <p class="text-lg font-semibold">แรงลัพธ์</p>
+                                        <p class="text-4xl font-bold text-gray-600">0 N</p>
+                                        <p class="font-semibold">ทิศทาง: สมดุล (ไม่เคลื่อนที่)</p>
+                                    </div>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="chart2"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card p-6 md:p-8 animate-on-load animated-delay-1" style="animation-name: fadeInSlideUp;">
+                            <h3 class="text-xl font-bold text-center text-[#F2545B] mb-4">สถานการณ์ที่ 3: แรงไม่สมดุล (ชนะฝั่งขวา)</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                                <div>
+                                    <p class="text-gray-600 mb-2">ในกรณีนี้ ฝั่งขวามีแรงมากกว่า (12 N) อย่างชัดเจน ทำให้แรงลัพธ์มีค่าเป็นลบ และเชือกจะเคลื่อนที่ไปทางขวาอย่างรวดเร็ว</p>
+                                    <div class="bg-red-100 p-4 rounded-lg text-center">
+                                        <p class="text-lg font-semibold">แรงลัพธ์</p>
+                                        <p class="text-4xl font-bold text-[#F2545B]">-9 N</p>
+                                        <p class="font-semibold">ทิศทาง: ไปทางขวา</p>
+                                    </div>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="chart3"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section id="takeaways" class="card p-6 md:p-8 animate-on-load animated-delay-2" style="animation-name: fadeInSlideUp;">
+                    <h2 class="text-2xl md:text-3xl font-bold text-center mb-6 text-[#7542B4] takeaway-text">📌 สรุปและคำแนะนำ</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="font-bold text-lg mb-2 flex items-center"><span class="text-2xl mr-2">📝</span>หลักการของแรงลัพธ์</h3>
+                            <ul class="list-none space-y-2 pl-8">
+                                <li class="flex items-start"><span class="text-green-500 font-bold mr-2">✔</span><strong class="mr-2">ค่าบวก:</strong>เคลื่อนที่ไปทางซ้าย</li>
+                                <li class="flex items-start"><span class="text-red-500 font-bold mr-2">✔</span><strong class="mr-2">ค่าลบ:</strong>เคลื่อนที่ไปทางขวา</li>
+                                <li class="flex items-start"><span class="text-gray-500 font-bold mr-2">✔</span><strong class="mr-2">ค่าศูนย์:</strong>ไม่เคลื่อนที่ (สมดุล)</li>
+                            </ul>
+                            <p class="text-sm text-gray-500 mt-2 pl-8">สมการ: แรงลัพธ์ = แรงซ้าย - แรงขวา</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-2 flex items-center"><span class="text-2xl mr-2">🎒</span>สำหรับครูผู้สอน</h3>
+                            <ul class="list-none space-y-2 pl-8">
+                                <li class="flex items-start"><span class="text-yellow-500 mr-2">▶</span>ใช้ประกอบการสอนเรื่องแรงและการเคลื่อนที่</li>
+                                <li class="flex items-start"><span class="text-yellow-500 mr-2">▶</span>กระตุ้นให้นักเรียนทดลองเปลี่ยนค่าเพื่อสังเกตผล</li>
+                                <li class="flex items-start"><span class="text-yellow-500 mr-2">▶</span>ต่อยอดด้วยใบงานเพื่อส่งเสริมการคิดวิเคราะห์</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+
+            <footer class="text-center mt-12 pt-8 border-t border-gray-300 animate-on-load animated-delay-3" style="animation-name: fadeIn;">
+                <p class="text-gray-600">อินโฟกราฟิกจากคู่มือโดย <span class="font-semibold">ครูกันต์พัฒน์ เกตุนิ่ม</span></p>
+                <p class="text-sm text-gray-500 mt-1">ส่งเสริมการเรียนรู้แบบ STEM</p>
+            </footer>
+
+            <script>
+                // Chart.js script for the infographic section
+                const defaultChartOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', // Horizontal bar chart
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'แรง (นิวตัน)',
+                                font: { family: "'Kanit', sans-serif" }
+                            },
+                            ticks: {
+                            font: { family: "'Kanit', sans-serif" }
+                            }
+                        },
+                        y: {
+                            ticks: {
+                            font: { family: "'Kanit', sans-serif", size: 14 }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: true,
+                            titleFont: { family: "'Kanit', sans-serif" },
+                            bodyFont: { family: "'Kanit', sans-serif" },
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    let label = item.chart.data.labels[item.dataIndex];
+                                    if (Array.isArray(label)) {
+                                        return label.join(' ');
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                };
+
+                const chartColors = {
+                    left: 'rgba(0, 166, 237, 0.6)',       // Blue with transparency
+                    right: 'rgba(242, 84, 91, 0.6)',      // Red with transparency
+                    leftBorder: 'rgb(0, 166, 237)',       // Solid blue for border
+                    rightBorder: 'rgb(242, 84, 91)',      // Solid red for border
+                    balanced: 'rgba(100, 100, 100, 0.6)',// Gray with transparency for balanced
+                    balancedBorder: 'rgb(100, 100, 100)',// Solid gray for balanced border
+                };
+
+                // Chart for Situation 1: Unbalanced Force (Left Wins)
+                new Chart(document.getElementById('chart1'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['แรงฝั่งขวา', 'แรงฝั่งซ้าย'],
+                        datasets: [{
+                            label: 'แรง (N)',
+                            data: [10, 15], // Right force = 10N, Left force = 15N
+                            backgroundColor: [chartColors.right, chartColors.left],
+                            borderColor: [chartColors.rightBorder, chartColors.leftBorder],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: defaultChartOptions
+                });
+
+                // Chart for Situation 2: Balanced Force
+                new Chart(document.getElementById('chart2'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['แรงฝั่งขวา', 'แรงฝั่งซ้าย'],
+                        datasets: [{
+                            label: 'แรง (N)',
+                            data: [10, 10], // Right force = 10N, Left force = 10N
+                            backgroundColor: [chartColors.balanced, chartColors.balanced],
+                            borderColor: [chartColors.balancedBorder, chartColors.balancedBorder],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: defaultChartOptions
+                });
+
+                // Chart for Situation 3: Unbalanced Force (Right Wins)
+                new Chart(document.getElementById('chart3'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['แรงฝั่งซ้าย', 'แรงฝั่งขวา'],
+                        datasets: [{
+                            label: 'แรง (N)',
+                            data: [3, 12], // Left force = 3N, Right force = 12N
+                            backgroundColor: [chartColors.left, chartColors.right],
+                            borderColor: [chartColors.leftBorder, chartColors.rightBorder],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: defaultChartOptions
+                });
+            </script>
+        </section>
+
+    </div>
+</body>
+</html>

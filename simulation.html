@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation 3D: แรงลัพธ์จากการดึงเชือก</title>
+    <!-- Tailwind CSS CDN for utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Kanit for Thai typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles for the body */
+        body {
+            font-family: 'Kanit', sans-serif; /* Apply Kanit font */
+            margin: 0;
+            overflow: hidden; /* Prevent scrolling */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh; /* Full viewport height */
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* Subtle gradient background */
+            color: #3D3D3D;
+        }
+        /* Canvas specific styling for the 3D scene */
+        canvas {
+            display: block;
+            width: 100vw; /* Full viewport width */
+            /* Adjusted height to accommodate increased space from controls */
+            height: calc(100vh - 170px); /* Reduced space for bars */
+            background-color: #f0f8ff; /* Light blue background for the simulation area */
+        }
+        /* Container for controls at the top */
+        .controls-container {
+            position: absolute;
+            top: 50px; /* Adjusted top position as title bar is smaller */
+            left: 0;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white background */
+            padding: 5px 0; /* Reduced padding */
+            padding-bottom: 10px; /* Reduced padding-bottom to push canvas up */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+            z-index: 10; /* Ensure it stays above the canvas */
+        }
+        /* Styling for the control elements within the container */
+        .controls {
+            display: flex;
+            flex-wrap: wrap; /* Allow controls to wrap on smaller screens */
+            justify-content: center;
+            gap: 10px; /* Space between control elements */
+            padding: 5px; /* Reduced padding */
+        }
+        /* Styling for each label and its input */
+        .controls label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 14px;
+            color: #555;
+        }
+        /* Styling for number input fields */
+        .controls input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-family: 'Kanit', sans-serif;
+            color: #333;
+        }
+        /* Styling for buttons */
+        .controls button {
+            padding: 8px 15px;
+            background-color: #00A6ED; /* Blue color */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions on hover */
+            box-shadow: 0 4px 6px rgba(0, 166, 237, 0.3); /* Shadow for button pop-out effect */
+        }
+        /* Hover effect for buttons */
+        .controls button:hover {
+            background-color: #0077b6; /* Darker blue on hover */
+            box-shadow: 0 6px 10px rgba(0, 166, 237, 0.4); /* Enhanced shadow on hover */
+        }
+        /* Box displaying calculation results */
+        .calculation-box {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+            border: 2px solid #FFB300; /* Orange border */
+            border-radius: 10px;
+            padding: 10px 15px;
+            text-align: left;
+            font-size: 14px;
+            color: #333;
+            width: 280px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); /* Stronger shadow */
+            z-index: 5; /* Below controls, above canvas */
+        }
+        /* Spacing for lines within the calculation box */
+        .calculation-box div {
+            margin-bottom: 4px;
+        }
+        /* Title bar at the top, slightly above controls */
+        .title-bar {
+            text-align: center;
+            padding: 5px; /* Reduced padding */
+            background-color: rgba(255, 255, 255, 0.95); /* Nearly opaque white */
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            z-index: 11; /* Highest z-index to be on top */
+            position: absolute; /* To ensure it stays at the very top */
+            top: 0;
+            left: 0;
+            padding-top: 10px; /* Reduced padding to give less space */
+            padding-bottom: 10px; /* Reduced padding-bottom for less space */
+        }
+        /* Labels for forces (HTML overlay on top of canvas) */
+        .force-label {
+            position: absolute;
+            transform: translate(-50%, -50%); /* Center the label */
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 13px;
+            white-space: nowrap; /* Prevent text wrapping */
+            pointer-events: none; /* Allow clicks to pass through to the canvas */
+            z-index: 20; /* Ensure it's above other elements */
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+            top: 20px; /* Adjusted initial Y position for labels */
+        }
+        /* Quiz container styling */
+        #quizContainer {
+            background-color: rgba(0,0,0,0.7);
+        }
+        #quizOptions label {
+            cursor: pointer;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            transition: background-color 0.2s;
+        }
+        #quizOptions label:hover {
+            background-color: #f0f0f0;
+        }
+        #quizOptions input[type="radio"]:checked + label {
+            background-color: #e0f7fa; /* Light blue */
+            border-color: #00A6ED;
+        }
+        #quizOptions input[type="radio"] {
+            /* Hide default radio button */
+            display: none; 
+        }
+        /* Specific colors for each force label */
+        #leftForceLabel { color: #00A6ED; border: 1px solid #00A6ED; } /* Blue for left force */
+        #rightForceLabel { color: #F2545B; border: 1px solid #F2545B; } /* Red for right force */
+        #resultantForceLabel { color: #00B06B; border: 1px solid #00B06B; } /* Green for resultant force */
+    </style>
+</head>
+<body>
+    <!-- Confirmation: Neither Mermaid JS nor SVG graphics were used in this file. All visuals are rendered using three.js Canvas. -->
+
+    <!-- Title Bar for the simulation -->
+    <div class="title-bar">
+        <h1 class="text-xl md:text-2xl font-bold text-[#00A6ED]">การดึงเชือก: แรงลัพธ์และการหาแรงลัพธ์ โดย ครูกันต์พัฒน์ เกตุนิ่ม</h1>
+    </div>
+
+    <!-- Controls Container for user inputs and actions -->
+    <div id="controlsContainer" class="controls-container">
+        <div class="controls">
+            <label>จำนวนเด็กฝั่งซ้าย: <input type="number" id="leftCount" value="0" min="0" max="5"></label>
+            <label>ขนาดแรงของเด็กฝั่งซ้าย (N): <input type="number" id="leftForce" value="1" min="1" max="20"></label>
+            <label>จำนวนเด็กฝั่งขวา: <input type="number" id="rightCount" value="0" min="0" max="5"></label>
+            <label>ขนาดแรงของเด็กฝวา (N): <input type="number" id="rightForce" value="1" min="1" max="20"></label>
+            <button id="startButton">เริ่มจำลอง</button>
+            <button id="resetButton">รีเซ็ต</button>
+            <button id="startQuizBtn" class="bg-purple-500 text-white px-5 py-2 rounded-lg hover:bg-purple-600 transition-colors shadow-md">เริ่มแบบทดสอบ</button>
+        </div>
+    </div>
+
+    <!-- Calculation Box to display force values and direction -->
+    <div id="calculationBox" class="calculation-box">
+        <div id="calcLine1">แรงซ้าย = 0 นิวตัน</div>
+        <div id="calcLine2">แรงขวา = 0 นิวตัน</div>
+        <div id="calcLine3">แรงลัพธ์ = 0 นิวตัน</div>
+        <div id="directionLine">สรุปทิศทางเชือก: เชือกไม่เคลื่อนที่ (แรงสมดุล)</div>
+    </div>
+
+    <!-- HTML overlay labels for forces, dynamically positioned by JavaScript -->
+    <div id="leftForceLabel" class="force-label"></div>
+    <div id="rightForceLabel" class="force-label"></div>
+    <div id="resultantForceLabel" class="force-label"></div>
+
+    <!-- Quiz Container (initially hidden) -->
+    <div id="quizContainer" class="hidden fixed inset-0 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-11/12 max-w-lg text-center">
+            <h2 id="quizQuestion" class="text-xl font-bold mb-4 text-[#00A6ED]"></h2>
+            <div id="quizOptions" class="flex flex-col gap-3 mb-6 text-left">
+                <!-- Radio buttons will be inserted here by JS -->
+            </div>
+            <button id="nextQuestionBtn" class="bg-[#00A6ED] text-white px-5 py-2 rounded-lg hover:bg-[#0077b6] transition-colors shadow-md">คำถามถัดไป</button>
+            <button id="submitQuizBtn" class="bg-green-500 text-white px-5 py-2 rounded-lg hover:bg-green-600 transition-colors shadow-md hidden">ส่งคำตอบ</button>
+            <div id="quizResult" class="mt-4 text-lg font-semibold text-gray-800"></div>
+            <button id="closeQuizBtn" class="bg-gray-500 text-white px-5 py-2 rounded-lg hover:bg-gray-600 transition-colors shadow-md mt-4">ปิด</button>
+        </div>
+    </div>
+
+    <!-- Three.js and Tween.js CDN scripts are loaded here, at the end of the body for better performance -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.6.4/dist/tween.umd.min.js"></script>
+
+    <script>
+        // Global variables for Three.js scene elements
+        let scene, camera, renderer;
+        let ambientLight, directionalLight;
+        let ground;
+        const peopleLeft = []; // Array to store left team characters
+        const peopleRight = []; // Array to store right team characters
+        let rope;
+        let leftArrow, rightArrow, resultArrow; // 3D arrows for forces
+
+        // Variables for camera control (mouse interaction)
+        let isMouseDown = false; // Flag for mouse button state
+        let previousMouseX = 0; // Stores previous mouse X position for delta calculation
+        let previousMouseY = 0; // Stores previous mouse Y position for delta calculation
+        let cameraRadius = 10; // Distance of camera from the center (zoom level)
+        let cameraAngleX = Math.PI / 4; // Horizontal rotation angle of the camera
+        let cameraAngleY = Math.PI / 8; // Vertical rotation angle of the camera
+
+        // Constants for rope position and movement limits
+        const ROPE_INITIAL_X = 0; // Initial X position of the rope (center)
+        const ROPE_MAX_OFFSET = 1.5; // Maximum displacement of the rope from the center
+
+        // Quiz related variables and data
+        const quizQuestions = [
+            {
+                question: "แรงคืออะไร?",
+                options: ["สิ่งที่ทำให้วัตถุเปลี่ยนรูปร่าง", "สิ่งที่ทำให้วัตถุเคลื่อนที่", "สิ่งที่ทำให้วัตถุเปลี่ยนแปลงการเคลื่อนที่", "ถูกทุกข้อ"],
+                answer: 3 // Index of the correct option (0-based)
+            },
+            {
+                question: "แรงลัพธ์หมายถึงอะไร?",
+                options: ["แรงที่กระทำต่อวัตถุหลายแรง", "ผลรวมของแรงที่กระทำต่อวัตถุ", "แรงที่ทำให้วัตถุสมดุล", "แรงต้านการเคลื่อนที่"],
+                answer: 1
+            },
+            {
+                question: "หากมีแรงสองแรงกระทำต่อวัตถุในทิศทางตรงข้ามกัน แรงลัพธ์จะคำนวณอย่างไร?",
+                options: ["นำแรงทั้งสองมาบวกกัน", "นำแรงทั้งสองมาลบกัน (แรงมาก-แรงน้อย)", "นำแรงทั้งสองมาคูณกัน", "นำแรงทั้งสองมาหารกัน"],
+                answer: 1
+            },
+            {
+                question: "ถ้าแรงซ้าย 10 N และแรงขวา 5 N กระทำต่อเชือก แรงลัพธ์คือเท่าใดและเชือกจะเคลื่อนที่ไปทางใด?",
+                options: ["5 N ไปทางซ้าย", "5 N ไปทางขวา", "15 N ไปทางซ้าย", "15 N ไปทางขวา"],
+                answer: 0
+            },
+            {
+                question: "ในสถานการณ์การชักกะเย่อ หากแรงลัพธ์เป็นศูนย์ แสดงว่าอะไร?",
+                options: ["ไม่มีแรงกระทำ", "แรงทั้งสองฝั่งเท่ากัน", "เชือกเคลื่อนที่ไปเรื่อยๆ", "เชือกขาด"],
+                answer: 1
+            },
+            {
+                question: "หน่วยของแรงคืออะไร?",
+                options: ["เมตร (m)", "วินาที (s)", "นิวตัน (N)", "กิโลกรัม (kg)"],
+                answer: 2
+            },
+            {
+                question: "แรงใดที่ทำให้วัตถุหยุดนิ่งเมื่อวางอยู่บนพื้น?",
+                options: ["แรงโน้มถ่วง", "แรงเสียดทาน", "แรงผลัก", "แรงดึง"],
+                answer: 1
+            },
+            {
+                question: "หากแรงสองแรงกระทำในทิศทางเดียวกัน แรงลัพธ์จะคำนวณอย่างไร?",
+                options: ["นำแรงทั้งสองมาลบกัน", "นำแรงทั้งสองมาบวกกัน", "นำแรงทั้งสองมาคูณกัน", "นำแรงทั้งสองมาหารกัน"],
+                answer: 1
+            },
+            {
+                question: "แรงที่ทำให้วัตถุร่วงลงสู่พื้นคือแรงอะไร?",
+                options: ["แรงตึง", "แรงบิด", "แรงโน้มถ่วง", "แรงเสียดทาน"],
+                answer: 2
+            },
+            {
+                question: "ข้อใดต่อไปนี้เป็นปริมาณเวกเตอร์?",
+                options: ["มวล", "ระยะทาง", "เวลา", "แรง"],
+                answer: 3
+            }
+        ];
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        /**
+         * Initializes the Three.js scene, camera, renderer, and adds basic lighting and ground.
+         * Sets up event listeners for window resize and mouse interactions for camera control.
+         */
+        function init() {
+            // Scene setup: A container for all 3D objects, lights, and cameras
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf0f8ff); // Light blue background color for the scene
+
+            // Camera setup: Defines the viewpoint for the scene (PerspectiveCamera for 3D view)
+            // PerspectiveCamera(FOV, Aspect Ratio, Near Plane, Far Plane)
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / (window.innerHeight - 170), 0.1, 1000); // Adjusted for new canvas height
+            updateCameraPosition(); // Set initial camera position based on angles and radius
+
+            // Renderer setup: Renders the scene onto a canvas
+            renderer = new THREE.WebGLRenderer({ antialias: true }); // Enable antialiasing for smoother edges
+            renderer.setSize(window.innerWidth, window.innerHeight - 170); // Set renderer size to match canvas dimensions (Adjusted)
+            renderer.shadowMap.enabled = true; // Enable shadows in the scene
+            document.body.appendChild(renderer.domElement); // Add the renderer's canvas to the HTML document body
+
+            // Lighting: Adds illumination to the scene
+            ambientLight = new THREE.AmbientLight(0x404040); // Soft white light, illuminates all objects equally
+            scene.add(ambientLight);
+
+            directionalLight = new THREE.DirectionalLight(0xffffff, 0.8); // Main light source (like the sun)
+            directionalLight.position.set(5, 10, 7); // Position of the light source
+            directionalLight.castShadow = true; // Enable this light source to cast shadows
+            // Configure shadow map resolution and camera bounds for better shadow quality
+            directionalLight.shadow.mapSize.width = 1024;
+            directionalLight.shadow.mapSize.height = 1024;
+            directionalLight.shadow.camera.near = 0.5;
+            directionalLight.shadow.camera.far = 50;
+            directionalLight.shadow.camera.left = -10;
+            directionalLight.shadow.camera.right = 10;
+            directionalLight.shadow.camera.top = 10;
+            directionalLight.shadow.camera.bottom = -10;
+            scene.add(directionalLight);
+
+            // Create main scene elements
+            createGround(); // Add the ground plane
+            createRope();    // Add the rope object
+
+            // Add some trees to the background, focusing on corners
+            const treePositions = [
+                { x: -8, z: -4 },
+                { x: -6, z: -3.5 },
+                { x: 5, z: -4 },
+                { x: 7, z: -3.8 }
+            ];
+
+            treePositions.forEach(pos => {
+                const tree = createTree();
+                tree.position.set(pos.x, 0, pos.z);
+                scene.add(tree);
+            });
+
+            // Event Listeners for responsiveness and camera control
+            window.addEventListener('resize', onWindowResize, false); // Handle window resizing
+            renderer.domElement.addEventListener('mousedown', onDocumentMouseDown, false); // Mouse down for camera drag start
+            renderer.domElement.addEventListener('mouseup', onDocumentMouseUp, false);    // Mouse up for camera drag end
+            renderer.domElement.addEventListener('mousemove', onDocumentMouseMove, false); // Mouse move for camera rotation
+
+            // Touch event listeners for mobile responsiveness
+            renderer.domElement.addEventListener('touchstart', onDocumentTouchStart, false);
+            renderer.domElement.addEventListener('touchend', onDocumentTouchEnd, false);
+            renderer.domElement.addEventListener('touchmove', onDocumentTouchMove, false);
+
+            // Event listeners for control buttons
+            document.getElementById('startButton').addEventListener('click', startGame);
+            document.getElementById('resetButton').addEventListener('click', resetSimulation);
+            document.getElementById('startQuizBtn').addEventListener('click', startQuiz);
+            document.getElementById('nextQuestionBtn').addEventListener('click', nextQuestion);
+            document.getElementById('submitQuizBtn').addEventListener('click', showQuizResult);
+            document.getElementById('closeQuizBtn').addEventListener('click', closeQuiz);
+
+
+            startGame(); // Run simulation for initial state with default values
+        }
+
+        /**
+         * Creates a flat ground plane for the simulation.
+         */
+        function createGround() {
+            const geometry = new THREE.PlaneGeometry(20, 10); // Create a plane geometry (width, height)
+            const material = new THREE.MeshStandardMaterial({ color: 0x6B8E23 }); // OliveDrab for a grassy look
+            ground = new THREE.Mesh(geometry, material); // Create the mesh
+            ground.rotation.x = -Math.PI / 2; // Rotate the plane to be horizontal (flat on the XY plane)
+            ground.receiveShadow = true; // Allow the ground to receive shadows from other objects
+            ground.position.y = 0; // Ensure ground is at Y=0
+            scene.add(ground); // Add the ground to the scene
+        }
+
+        /**
+         * Creates a blocky, Minecraft-style character model for the tug-of-war teams,
+         * resembling the 'Steve' character.
+         * The character consists of head, torso, and individual arm/leg blocks.
+         * Colors for shirt and pants are based on the team side.
+         * The character is built such that its feet are at Y=0.
+         * @param {string} teamSide - 'left' or 'right' to determine shirt color.
+         * @returns {THREE.Group} A group containing all mesh components of the person.
+         */
+        function createMinecraftPerson(teamSide) {
+            const personGroup = new THREE.Group();
+
+            // Minecraft 'Steve' inspired colors
+            const skinColor = 0x8D5524; // Darker skin tone for Steve
+            const hairColor = 0x4A2C1A; // Dark brown hair for Steve
+            const shirtColor = (teamSide === 'left') ? 0x20B2AA : 0xFF4500; // Light Sea Green / OrangeRed
+            const pantsColor = 0x4169E1; // Royal Blue
+            const eyeColor = 0x228B22; // Forest Green for eyes
+            const mouthColor = 0x654321; // Brown for mouth (like Steve's smile line)
+
+            // Dimensions (approximate Minecraft proportions)
+            const headWidth = 0.8;
+            const headHeight = 0.8;
+            const headDepth = 0.8;
+
+            const torsoWidth = 0.8;
+            const torsoHeight = 1.2;
+            const torsoDepth = 0.4;
+
+            const armWidth = 0.4;
+            const armHeight = 1.2;
+            const armDepth = 0.4;
+
+            const legWidth = 0.4;
+            const legHeight = 1.2; // Each leg block
+            const legDepth = 0.4;
+
+            // --- Body Parts ---
+            // Right Leg
+            const rightLeg = new THREE.Mesh(new THREE.BoxGeometry(legWidth, legHeight, legDepth), new THREE.MeshStandardMaterial({ color: pantsColor }));
+            rightLeg.position.set(-torsoWidth / 4, legHeight / 2, 0);
+            // Slight bend for pulling stance
+            rightLeg.rotation.x = teamSide === 'left' ? -Math.PI / 10 : Math.PI / 10;
+            personGroup.add(rightLeg);
+
+            // Left Leg
+            const leftLeg = new THREE.Mesh(new THREE.BoxGeometry(legWidth, legHeight, legDepth), new THREE.MeshStandardMaterial({ color: pantsColor }));
+            leftLeg.position.set(torsoWidth / 4, legHeight / 2, 0);
+            // Slight bend for pulling stance
+            leftLeg.rotation.x = teamSide === 'left' ? Math.PI / 10 : -Math.PI / 10;
+            personGroup.add(leftLeg);
+
+            // Torso
+            const torso = new THREE.Mesh(new THREE.BoxGeometry(torsoWidth, torsoHeight, torsoDepth), new THREE.MeshStandardMaterial({ color: shirtColor }));
+            torso.position.y = legHeight + torsoHeight / 2;
+            personGroup.add(torso);
+
+            // Head
+            const head = new THREE.Mesh(new THREE.BoxGeometry(headWidth, headHeight, headDepth), new THREE.MeshStandardMaterial({ color: skinColor }));
+            head.position.y = torsoHeight / 2 + headHeight / 2;
+            // Slight head rotation towards the camera for visibility of face features
+            // Left team: rotate head +PI/8 on Y to turn right (towards camera)
+            // Right team: rotate head -PI/8 on Y to turn left (towards camera)
+            head.rotation.y = (teamSide === 'left' ? Math.PI / 8 : -Math.PI / 8); 
+            torso.add(head);
+
+            // Hair (simple block on top of head)
+            const hair = new THREE.Mesh(new THREE.BoxGeometry(headWidth * 1.05, headHeight * 0.7, headDepth * 1.05), new THREE.MeshStandardMaterial({ color: hairColor }));
+            hair.position.y = headHeight / 2 - hair.geometry.parameters.height / 2 + 0.05; // On top of head
+            head.add(hair);
+
+            // Eyes (two small boxes)
+            const eyeGeometry = new THREE.BoxGeometry(0.12, 0.12, 0.05); // Adjust size for Steve's eyes
+            const eyeMaterial = new THREE.MeshStandardMaterial({ color: eyeColor });
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.set(-headWidth / 4, headHeight / 8, headDepth / 2 + 0.01); // Position on face (local Z-front)
+            head.add(leftEye);
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.set(headWidth / 4, headHeight / 8, headDepth / 2 + 0.01); // Position on face (local Z-front)
+            head.add(rightEye);
+
+            // Mouth (thin rectangular line)
+            const mouthGeometry = new THREE.BoxGeometry(0.4, 0.05, 0.05); // Thin, wider rectangle for mouth
+            const mouthMaterial = new THREE.MeshStandardMaterial({ color: mouthColor });
+            const mouth = new THREE.Mesh(mouthGeometry, mouthMaterial);
+            mouth.position.set(0, -headHeight / 4, headDepth / 2 + 0.01); // Position on face (local Z-front)
+            head.add(mouth);
+
+            // Right Arm - Adjusted for holding rope
+            const rightArm = new THREE.Mesh(new THREE.BoxGeometry(armWidth, armHeight, armDepth), new THREE.MeshStandardMaterial({ color: skinColor }));
+            // Positioned relative to torso to resemble arm at shoulder
+            rightArm.position.set(-(torsoWidth / 2 + armWidth / 2), torsoHeight / 2 - 0.1, 0.2); // slight forward on Z
+            rightArm.rotation.x = -Math.PI / 6; // Angle forward slightly
+            rightArm.rotation.z = Math.PI / 8; // Angle downwards slightly
+            torso.add(rightArm);
+
+            // Left Arm - Adjusted for holding rope
+            const leftArm = new THREE.Mesh(new THREE.BoxGeometry(armWidth, armHeight, armDepth), new THREE.MeshStandardMaterial({ color: skinColor }));
+            // Positioned relative to torso to resemble arm at shoulder
+            leftArm.position.set((torsoWidth / 2 + armWidth / 2), torsoHeight / 2 - 0.1, 0.2); // slight forward on Z
+            leftArm.rotation.x = -Math.PI / 6; // Angle forward slightly
+            leftArm.rotation.z = -Math.PI / 8; // Angle downwards slightly
+            torso.add(leftArm);
+
+            // Ensure all meshes within the personGroup cast and receive shadows
+            personGroup.traverse((object) => {
+                if (object.isMesh) {
+                    object.castShadow = true;
+                    object.receiveShadow = true;
+                }
+            });
+
+            // Store references to arms for rope attachment (optional, but good practice if needed for precise rope attachment)
+            personGroup.userData.leftArm = leftArm;
+            personGroup.userData.rightArm = rightArm;
+
+            return personGroup;
+        }
+
+        /**
+         * Creates a simple blocky tree for the background.
+         * @returns {THREE.Group} A group containing the tree trunk and leaves.
+         */
+        function createTree() {
+            const treeGroup = new THREE.Group();
+
+            // Trunk (brown cylinder)
+            const trunkHeight = 2.5; // Slightly taller trees
+            const trunkRadius = 0.25; // Slightly wider trunk
+            const trunkGeometry = new THREE.CylinderGeometry(trunkRadius, trunkRadius, trunkHeight, 8);
+            const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 }); // Brown
+            const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+            trunk.position.y = trunkHeight / 2; // Base at Y=0
+            trunk.castShadow = true;
+            trunk.receiveShadow = true;
+            treeGroup.add(trunk);
+
+            // Leaves (green box/sphere) - using a box for Minecraft style
+            const leavesSize = 1.8; // Larger leaves
+            const leavesGeometry = new THREE.BoxGeometry(leavesSize, leavesSize, leavesSize);
+            const leavesMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 }); // Forest Green
+            const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial);
+            leaves.position.y = trunkHeight + leavesSize / 2 - 0.3; // Position above trunk, slightly overlapping
+            leaves.castShadow = true;
+            leaves.receiveShadow = true;
+            treeGroup.add(leaves);
+
+            return treeGroup;
+        }
+
+
+        /**
+         * Creates the rope object (a long cylinder) in the scene.
+         */
+        function createRope() {
+            const geometry = new THREE.CylinderGeometry(0.05, 0.05, 10, 8);
+            const material = new THREE.MeshStandardMaterial({ color: 0x8B4513 }); // Brown
+            rope = new THREE.Mesh(geometry, material);
+            rope.rotation.z = Math.PI / 2; // Rotate to be horizontal
+            // Adjusted Y position to align with character arms when standing straight and holding
+            rope.position.set(ROPE_INITIAL_X, 1.7, 0.4); // Y for arm height, and Z to be slightly forward where hands would be
+            rope.castShadow = true;
+            rope.receiveShadow = true;
+            scene.add(rope);
+        }
+
+        /**
+         * Creates a 3D arrow composed of a cylinder body and a cone head.
+         * @param {number} color - Hexadecimal color for the arrow.
+         * @returns {THREE.Group} A group containing the arrow body and head.
+         */
+        function createArrow(color) {
+            // Body of the arrow (cylinder)
+            const bodyGeometry = new THREE.CylinderGeometry(0.08, 0.08, 1.5, 8); // Thicker and longer
+            // Head of the arrow (cone)
+            const headGeometry = new THREE.ConeGeometry(0.25, 0.5, 8); // Larger head
+            const material = new THREE.MeshBasicMaterial({ color: color });
+
+            const body = new THREE.Mesh(bodyGeometry, material);
+            body.position.x = 0.75; // Adjust position based on new length
+            body.rotation.z = Math.PI / 2; // Rotate to be horizontal
+
+            const head = new THREE.Mesh(headGeometry, material);
+            head.position.x = 1.5; // Position at the end of the body
+            head.rotation.z = -Math.PI / 2; // Point left initially
+
+            const arrowGroup = new THREE.Group();
+            arrowGroup.add(body, head);
+            arrowGroup.scale.set(0.1, 0.1, 0.1); // Base scale, will be updated by force
+            arrowGroup.position.y = 0.5; // Default y position for arrows, will be overridden
+            scene.add(arrowGroup);
+            return arrowGroup;
+        }
+
+        /**
+         * Updates the scale, position, and orientation of a 3D arrow based on force.
+         * @param {THREE.Group} arrow - The 3D arrow object to update.
+         * @param {number} force - The magnitude of the force (determines arrow length).
+         * @param {number} offset - The X-coordinate offset for the arrow's position.
+         * @param {string} orientation - 'left' or 'right' to determine arrow direction.
+         */
+        function updateArrow(arrow, force, offset, orientation = 'left') {
+            const arrowLengthScale = Math.abs(force) * 0.12; // Adjusted scale factor for length
+            arrow.scale.set(arrowLengthScale > 0 ? arrowLengthScale : 0.001, 0.15, 0.15); // Increased thickness (Y, Z scale)
+            if (orientation === 'left') {
+                arrow.position.x = offset - (arrowLengthScale / 2); // Position based on length
+                arrow.rotation.y = Math.PI; // Correct: Point LEFT (180 degrees)
+            } else if (orientation === 'right') {
+                arrow.position.x = offset + (arrowLengthScale / 2); // Position based on length
+                arrow.rotation.y = 0; // Correct: Point RIGHT (0 degrees)
+            }
+            arrow.visible = Math.abs(force) > 0; // Show arrow if force is non-zero
+        }
+
+        /**
+         * Updates the position and content of an HTML label element to overlay a 3D object.
+         * The label's position is calculated by projecting the 3D object's world position onto the screen.
+         * @param {HTMLElement} labelElement - The HTML div element to update.
+         * @param {THREE.Object3D} threeDObject - The Three.js object whose position the label should follow.
+         * @param {string} text - The text content for the label.
+         * @param {number} [xOffset=0] - Horizontal pixel offset for fine-tuning label position.
+         * @param {number} [yOffset=-15] - Vertical pixel offset for fine-tuning label position (adjusted to be closer).
+         */
+        function updateHTMLLabel(labelElement, threeDObject, text, xOffset = 0, yOffset = 20) { 
+            // Check if label or object exists, or if object is not visible (e.g., force is zero)
+            if (!labelElement || !threeDObject || !threeDObject.parent || !threeDObject.visible) {
+                labelElement.style.display = 'none'; // Hide the label
+                return;
+            }
+
+            // Get the world position of the 3D object
+            const vector = new THREE.Vector3();
+            threeDObject.getWorldPosition(vector);
+            vector.project(camera); // Project the 3D world position to 2D screen coordinates (-1 to 1)
+
+            // Convert normalized device coordinates to CSS pixels
+            const x = (vector.x * .5 + .5) * renderer.domElement.clientWidth;
+            const y = (-vector.y * .5 + .5) * renderer.domElement.clientHeight;
+
+            // Apply calculated position and content to the HTML label
+            labelElement.style.left = `${x + xOffset}px`;
+            labelElement.style.top = `${y + yOffset}px`;
+            labelElement.textContent = text;
+            labelElement.style.display = 'block'; // Make sure the label is visible
+        }
+
+        /**
+         * Starts the simulation:
+         * 1. Clears existing characters and arrows.
+         * 2. Creates new force arrows.
+         * 3. Reads user input for counts and forces.
+         * 4. Calculates total forces and net force.
+         * 5. Spawns characters for both teams.
+         * 6. Updates 3D force arrows based on calculated forces.
+         * 7. Animate rope movement using Tween.js.
+         * 8. Updates the calculation display box and HTML force labels.
+         */
+        function startGame() {
+            // Clear existing characters from the scene
+            peopleLeft.forEach(p => scene.remove(p));
+            peopleRight.forEach(p => scene.remove(p));
+            peopleLeft.length = 0; // Empty the arrays
+            peopleRight.length = 0;
+
+            // Remove existing force arrows from the scene if they exist
+            if (leftArrow) scene.remove(leftArrow);
+            if (rightArrow) scene.remove(rightArrow);
+            if (resultArrow) scene.remove(resultArrow);
+
+            // Create new force arrows with specific colors
+            leftArrow = createArrow(0x00A6ED); // Blue for left force
+            rightArrow = createArrow(0xF2545B); // Red for right force
+            resultArrow = createArrow(0x00B06B); // Green for resultant force
+
+            // Retrieve values from input fields
+            const leftCount = parseInt(document.getElementById("leftCount").value);
+            const rightCount = parseInt(document.getElementById("rightCount").value);
+            const leftForce = parseInt(document.getElementById("leftForce").value);
+            const rightForce = parseInt(document.getElementById("rightForce").value);
+
+            // Calculate total forces for each side and the net force
+            const F_left = leftCount * leftForce;
+            const F_right = rightCount * rightForce;
+            const netForce = F_left - F_right; // Positive means left wins, negative means right wins
+
+            // Add people to the scene based on count
+            const startXLeft = -4; // Starting X position for the first person on the left
+            const spacing = 1.5; // Increased spacing between people to prevent overlap and spread them out
+            for (let i = 0; i < leftCount; i++) {
+                // Use the new createMinecraftPerson function
+                const person = createMinecraftPerson('left');
+                person.userData.initialX = startXLeft + (i * spacing); // Store initial X position
+                person.position.set(person.userData.initialX, 0, 0); // Set initial position (feet at Y=0)
+                person.rotation.y = -Math.PI / 2; // Make left team face right (positive X), pulling left
+                peopleLeft.push(person);
+                scene.add(person);
+            }
+
+            const startXRight = 4; // Starting X position for the first person on the right
+            for (let i = 0; i < rightCount; i++) {
+                // Use the new createMinecraftPerson function
+                const person = createMinecraftPerson('right');
+                person.userData.initialX = startXRight - (i * spacing); // Store initial X position
+                person.position.set(person.userData.initialX, 0, 0); // Set initial position (feet at Y=0)
+                person.rotation.y = Math.PI / 2; // Make right team face left (negative X), pulling right
+                peopleRight.push(person);
+                scene.add(person);
+            }
+
+            // Update force arrows positions and visibility
+            // Increased Y position to place arrows above characters' heads
+            updateArrow(leftArrow, F_left, -2.5, 'left'); // Position left arrow
+            leftArrow.position.y = 3.8; // Set Y position above the left team's heads
+            leftArrow.position.z = 0; // Keep arrows on the Z=0 plane for clarity
+
+            updateArrow(rightArrow, F_right, 2.5, 'right'); // Position right arrow
+            rightArrow.position.y = 3.8; // Set Y position above the right team's heads
+            rightArrow.position.z = 0; // Keep arrows on the Z=0 plane for clarity
+
+            // Update resultant force arrow visibility and direction
+            if (netForce > 0) {
+                updateArrow(resultArrow, netForce, -0.0, 'left'); // Resultant arrow points left
+            } else if (netForce < 0) {
+                updateArrow(resultArrow, netForce, 0.0, 'right'); // Resultant arrow points right
+            } else {
+                resultArrow.visible = false; // Hide if net force is zero
+            }
+            // Adjusted Y position for the resultant force arrow to be above the rope but below team arrows
+            resultArrow.position.y = 3.0; 
+            resultArrow.position.z = 0; // Keep arrows on the Z=0 plane for clarity
+
+            // Animate rope movement based on netForce
+            let targetRopeX = ROPE_INITIAL_X;
+            if (netForce !== 0) {
+                // Calculate target X based on net force direction and max offset
+                // If netForce > 0, left team is stronger, rope moves left (negative X)
+                targetRopeX = ROPE_INITIAL_X + (netForce > 0 ? -1 : 1) * ROPE_MAX_OFFSET;
+            }
+            // Use Tween.js for smooth rope movement animation
+            new TWEEN.Tween(rope.position)
+                .to({ x: targetRopeX }, 500) // Animate over 500 milliseconds
+                .easing(TWEEN.Easing.Quadratic.Out) // Easing function for smooth stop
+                .start();
+
+            // Update calculation box display with current force values and direction
+            document.getElementById("calcLine1").textContent = `แรงซ้าย = ${F_left} นิวตัน`;
+            document.getElementById("calcLine2").textContent = `แรงขวา = ${F_right} นิวตัน`;
+            document.getElementById("calcLine3").textContent = `แรงลัพธ์ = ${Math.abs(netForce)} นิวตัน`;
+
+            let directionText = "เชือกไม่เคลื่อนที่ (แรงสมดุล)";
+            if (netForce > 0) {
+                directionText = "เชือกเคลื่อนที่ไปทางซ้าย";
+            } else if (netForce < 0) {
+                directionText = "เชือกเคลื่อนที่ไปทางขวา";
+            }
+            document.getElementById("directionLine").textContent = `สรุปทิศทางเชือก: ${directionText}`;
+
+            // Update person positions to follow the rope
+            // This creates the visual effect of people being pulled by the rope
+            const personTweenDuration = 500; // Same as rope animation duration
+            peopleLeft.forEach(person => {
+                const targetPersonX = person.userData.initialX + (targetRopeX * 0.5); // People move less than rope
+                new TWEEN.Tween(person.position)
+                    .to({ x: targetPersonX }, personTweenDuration)
+                    .easing(TWEEN.Easing.Quadratic.Out)
+                    .start();
+            });
+
+            peopleRight.forEach(person => {
+                const targetPersonX = person.userData.initialX + (targetRopeX * 0.5); // People move less than rope
+                new TWEEN.Tween(person.position)
+                    .to({ x: targetPersonX }, personTweenDuration)
+                    .easing(TWEEN.Easing.Quadratic.Out)
+                    .start();
+            });
+        }
+
+        /**
+         * Resets the simulation to its initial state:
+         * - Sets all input fields to their default values (0 children, 1 N force).
+         * - Calls startGame to re-render the scene with default values.
+         * - Resets the rope position.
+         * - Hides force labels.
+         */
+        function resetSimulation() {
+            document.getElementById("leftCount").value = "0";
+            document.getElementById("leftForce").value = "1";
+            document.getElementById("rightCount").value = "0";
+            document.getElementById("rightForce").value = "1";
+
+            // Reset rope position immediately
+            rope.position.x = ROPE_INITIAL_X;
+
+            // Hide force labels explicitly
+            document.getElementById('leftForceLabel').style.display = 'none';
+            document.getElementById('rightForceLabel').style.display = 'none';
+            document.getElementById('resultantForceLabel').style.display = 'none';
+
+            startGame(); // Restart the simulation with reset values
+        }
+
+        /**
+         * Handles window resizing events:
+         * - Updates camera aspect ratio.
+         * - Updates renderer size.
+         * - Re-renders the scene.
+         */
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / (window.innerHeight - 170); // Adjusted for new canvas height
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight - 170); // Adjusted for new canvas height
+        }
+
+        /**
+         * Handles mouse down event for camera rotation.
+         * Records initial mouse position and sets the `isMouseDown` flag.
+         * @param {MouseEvent} event - The mouse event object.
+         */
+        function onDocumentMouseDown(event) {
+            isMouseDown = true;
+            previousMouseX = event.clientX;
+            previousMouseY = event.clientY;
+        }
+
+        /**
+         * Handles mouse up event, releasing the camera rotation.
+         * Clears the `isMouseDown` flag.
+         */
+        function onDocumentMouseUp() {
+            isMouseDown = false;
+        }
+
+        /**
+         * Handles mouse move event for camera rotation when mouse button is pressed.
+         * Calculates delta movement and updates `cameraAngleX` and `cameraAngleY`.
+         * Calls `updateCameraPosition` to apply changes.
+         * @param {MouseEvent} event - The mouse event object.
+         */
+        function onDocumentMouseMove(event) {
+            if (!isMouseDown) return;
+
+            const deltaX = event.clientX - previousMouseX;
+            const deltaY = event.clientY - previousMouseY;
+
+            cameraAngleX += deltaX * 0.01; // Adjust sensitivity
+            cameraAngleY -= deltaY * 0.01; // Invert Y-axis for intuitive drag
+
+            // Clamp vertical angle to prevent camera going below ground or flipping
+            cameraAngleY = Math.max(-Math.PI / 2 + 0.1, Math.min(Math.PI / 2 - 0.1, cameraAngleY));
+
+            previousMouseX = event.clientX;
+            previousMouseY = event.touches && event.touches.length > 0 ? event.touches[0].clientY : event.clientY;
+
+            updateCameraPosition();
+        }
+
+        /**
+         * Handles touch start event for camera rotation.
+         * Records initial touch position and sets the `isMouseDown` flag.
+         * @param {TouchEvent} event - The touch event object.
+         */
+        function onDocumentTouchStart(event) {
+            if (event.touches.length === 1) {
+                isMouseDown = true; // Reusing isMouseDown for touch
+                previousMouseX = event.touches[0].clientX;
+                previousMouseY = event.touches[0].clientY;
+            }
+            event.preventDefault(); // Prevent scrolling on touch
+        }
+
+        /**
+         * Handles touch end event, releasing the camera rotation.
+         * Clears the `isMouseDown` flag.
+         */
+        function onDocumentTouchEnd() {
+            isMouseDown = false;
+        }
+
+        /**
+         * Handles touch move event for camera rotation.
+         * Calculates delta movement and updates `cameraAngleX` and `cameraAngleY`.
+         * Calls `updateCameraPosition` to apply changes.
+         * @param {TouchEvent} event - The touch event object.
+         */
+        function onDocumentTouchMove(event) {
+            if (!isMouseDown || event.touches.length !== 1) return;
+
+            const deltaX = event.touches[0].clientX - previousMouseX;
+            const deltaY = event.touches[0].clientY - previousMouseY;
+
+            cameraAngleX += deltaX * 0.01; // Adjust sensitivity
+            cameraAngleY -= deltaY * 0.01; // Invert Y-axis for intuitive drag
+
+            // Clamp vertical angle to prevent camera going below ground or flipping
+            cameraAngleY = Math.max(-Math.PI / 2 + 0.1, Math.min(Math.PI / 2 - 0.1, cameraAngleY));
+
+            previousMouseX = event.touches[0].clientX;
+            previousMouseY = event.touches[0].clientY;
+
+            updateCameraPosition();
+            event.preventDefault(); // Prevent scrolling while dragging
+        }
+
+        /**
+         * Updates the camera's position based on `cameraRadius`, `cameraAngleX`, and `cameraAngleY`.
+         * Ensures the camera always looks at the origin (0,0,0).
+         */
+        function updateCameraPosition() {
+            camera.position.x = cameraRadius * Math.sin(cameraAngleX) * Math.cos(cameraAngleY);
+            camera.position.y = cameraRadius * Math.sin(cameraAngleY);
+            camera.position.z = cameraRadius * Math.cos(cameraAngleX) * Math.cos(cameraAngleY);
+            camera.lookAt(new THREE.Vector3(0, 0.5, 0)); // Look slightly above the ground
+        }
+
+        /**
+         * The main animation loop.
+         * - Updates Tween.js animations.
+         * - Renders the Three.js scene.
+         * - Updates HTML labels to follow 3D arrows.
+         * - Requests the next animation frame.
+         */
+        function animate() {
+            requestAnimationFrame(animate); // Request the next animation frame
+
+            TWEEN.update(); // Update all active Tween.js animations
+
+            // Update HTML labels to follow their corresponding 3D arrows
+            const leftCount = parseInt(document.getElementById("leftCount").value);
+            const rightCount = parseInt(document.getElementById("rightCount").value);
+            const leftForce = parseInt(document.getElementById("leftForce").value);
+            const rightForce = parseInt(document.getElementById("rightForce").value);
+            const F_left = leftCount * leftForce;
+            const F_right = rightCount * rightForce;
+            const netForce = F_left - F_right;
+
+            updateHTMLLabel(document.getElementById('leftForceLabel'), leftArrow, `แรงซ้าย: ${F_left} N`);
+            updateHTMLLabel(document.getElementById('rightForceLabel'), rightArrow, `แรงขวา: ${F_right} N`);
+            
+            // Only show resultant force label if net force is not zero
+            if (Math.abs(netForce) > 0) {
+                updateHTMLLabel(document.getElementById('resultantForceLabel'), resultArrow, `แรงลัพธ์: ${Math.abs(netForce)} N`);
+            } else {
+                document.getElementById('resultantForceLabel').style.display = 'none';
+            }
+            
+            renderer.render(scene, camera); // Render the scene with the current camera view
+        }
+
+        // Quiz functions
+        function startQuiz() {
+            // Hide simulation UI, show quiz UI
+            document.getElementById('controlsContainer').classList.add('hidden');
+            document.getElementById('calculationBox').classList.add('hidden');
+            document.getElementById('leftForceLabel').style.display = 'none';
+            document.getElementById('rightForceLabel').style.display = 'none';
+            document.getElementById('resultantForceLabel').style.display = 'none';
+            renderer.domElement.classList.add('hidden'); // Hide the canvas
+            
+            document.getElementById('quizContainer').classList.remove('hidden');
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById('quizResult').textContent = '';
+            document.getElementById('submitQuizBtn').classList.add('hidden');
+            document.getElementById('nextQuestionBtn').classList.remove('hidden');
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            const q = quizQuestions[currentQuestionIndex];
+            document.getElementById('quizQuestion').textContent = `คำถามที่ ${currentQuestionIndex + 1}: ${q.question}`;
+            const optionsDiv = document.getElementById('quizOptions');
+            optionsDiv.innerHTML = '';
+            q.options.forEach((option, index) => {
+                const radioDiv = document.createElement('div');
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'quizOption';
+                radio.value = index;
+                radio.id = `option${index}`;
+                radio.classList.add('mr-2');
+                const label = document.createElement('label');
+                label.htmlFor = `option${index}`;
+                label.textContent = option;
+                radioDiv.appendChild(radio);
+                radioDiv.appendChild(label);
+                optionsDiv.appendChild(radioDiv);
+            });
+
+            // Show submit button on last question
+            if (currentQuestionIndex === quizQuestions.length - 1) {
+                document.getElementById('nextQuestionBtn').classList.add('hidden');
+                document.getElementById('submitQuizBtn').classList.remove('hidden');
+            } else {
+                document.getElementById('nextQuestionBtn').classList.remove('hidden');
+                document.getElementById('submitQuizBtn').classList.add('hidden');
+            }
+        }
+
+        function checkAnswer() {
+            const selectedOption = document.querySelector('input[name="quizOption"]:checked');
+            if (selectedOption) {
+                const userAnswer = parseInt(selectedOption.value);
+                if (userAnswer === quizQuestions[currentQuestionIndex].answer) {
+                    score++;
+                }
+            }
+        }
+
+        function nextQuestion() {
+            checkAnswer();
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizQuestions.length) {
+                displayQuestion();
+            } else {
+                showQuizResult();
+            }
+        }
+
+        function showQuizResult() {
+            checkAnswer(); // Check answer for the last question before showing results
+            document.getElementById('quizQuestion').textContent = 'ผลลัพธ์แบบทดสอบ';
+            document.getElementById('quizOptions').innerHTML = ''; // Clear options
+            document.getElementById('quizResult').textContent = `คุณได้คะแนน ${score} จาก ${quizQuestions.length} คะแนน`;
+            document.getElementById('nextQuestionBtn').classList.add('hidden');
+            document.getElementById('submitQuizBtn').classList.add('hidden');
+        }
+
+        function closeQuiz() {
+            document.getElementById('quizContainer').classList.add('hidden');
+            // Show simulation UI again
+            document.getElementById('controlsContainer').classList.remove('hidden');
+            document.getElementById('calculationBox').classList.remove('hidden');
+            renderer.domElement.classList.remove('hidden'); // Show the canvas again
+            startGame(); // Reinitialize simulation display
+        }
+
+        // Initialize the Three.js scene and start the animation loop when the window loads
+        window.onload = function() {
+            init();
+            animate();
+        };
+    </script>
+</body>
+</html>

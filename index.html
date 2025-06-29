@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เว็บไซต์การศึกษา: แรงลัพธ์ - หน้าแรก</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Kanit for Thai typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            scroll-behavior: smooth;
+            margin: 0;
+            background-color: #F8FAFC; /* สีพื้นหลังโทนขาวอมฟ้าอ่อน */
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 9999px; /* รูปทรงเม็ดยาโค้งมน */
+            transition: background-color 0.3s ease;
+        }
+        .nav-link.active, .nav-link:hover {
+            background-color: #3B82F6; /* สีน้ำเงินสดใสสำหรับเมนูที่ใช้งาน/โฮเวอร์ */
+            color: white;
+        }
+        .section {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); /* เงาที่นุ่มนวลขึ้น */
+            margin-bottom: 30px;
+            border: 1px solid #E0E7FF; /* ขอบสีฟ้าอ่อนที่เชื่อมโยงกับธีม */
+        }
+        .section-header {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1D4ED8; /* สีน้ำเงินเข้มสำหรับหัวข้อ */
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        /* สไตล์สำหรับพื้นที่รูปภาพที่สามารถคลิกได้ */
+        .clickable-photo {
+            cursor: default; /* เคอร์เซอร์เริ่มต้นเมื่อไม่ได้เปิดใช้งาน */
+            border: 4px solid #3B82F6; /* สีน้ำเงินหลัก */
+            transition: border-color 0.3s ease, transform 0.3s ease; /* เพิ่ม transform สำหรับแอนิเมชันเมื่อโฮเวอร์ */
+        }
+        .clickable-photo.enabled { /* คลาสใหม่เมื่อเปิดใช้งานการอัปโหลด */
+            cursor: pointer; /* เปลี่ยนเคอร์เซอร์เป็น pointer สำหรับการอัปโหลด */
+        }
+        .clickable-photo.enabled:hover {
+            border-color: #2563EB; /* สีน้ำเงินเข้มขึ้นเมื่อโฮเวอร์ */
+            transform: scale(1.05); /* ขยายเล็กน้อยเมื่อโฮเวอร์ */
+        }
+
+        /* --- แอนิเมชันสำหรับส่วนหน้าแรก --- */
+
+        /* เฟดอินและเลื่อนลงสำหรับส่วนหัว */
+        @keyframes fadeInSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animated-header {
+            animation: fadeInSlideDown 1s ease-out forwards;
+            animation-delay: 0.2s; /* หน่วงเวลาเล็กน้อยหลังจากโหลดหน้าเว็บ */
+            opacity: 0; /* เริ่มต้นซ่อน */
+        }
+
+        /* เฟดอินสำหรับข้อความและองค์ประกอบทั่วไป */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .animated-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0; /* เริ่มต้นซ่อน */
+        }
+
+        /* หน่วงเวลาแอนิเมชันแบบสลับสำหรับบล็อกข้อความ */
+        .animated-delay-1 { animation-delay: 0.5s; }
+        .animated-delay-2 { animation-delay: 0.7s; }
+        .animated-delay-3 { animation-delay: 0.9s; }
+        .animated-delay-4 { animation-delay: 1.1s; }
+        .animated-delay-5 { animation-delay: 1.3s; }
+        .animated-delay-6 { animation-delay: 1.5s; }
+        .animated-delay-7 { animation-delay: 1.7s; }
+        .animated-delay-8 { animation-delay: 1.9s; }
+        .animated-delay-9 { animation-delay: 2.1s; }
+        .animated-delay-10 { animation-delay: 2.3s; }
+        .animated-delay-11 { animation-delay: 2.5s; }
+        .animated-delay-12 { animation-delay: 2.7s; }
+        .animated-delay-13 { animation-delay: 2.9s; }
+        .animated-delay-14 { animation-delay: 3.1s; }
+        .animated-delay-15 { animation-delay: 3.3s; }
+        .animated-delay-16 { animation-delay: 3.5s; }
+        .animated-delay-17 { animation-delay: 3.7s; }
+        .animated-delay-18 { animation-delay: 3.9s; }
+        .animated-delay-19 { animation-delay: 4.1s; }
+        .animated-delay-20 { animation-delay: 4.3s; }
+        .animated-delay-21 { animation-delay: 4.5s; }
+        .animated-delay-22 { animation-delay: 4.7s; }
+        .animated-delay-23 { animation-delay: 4.9s; }
+        .animated-delay-24 { animation-delay: 5.1s; }
+        .animated-delay-25 { animation-delay: 5.3s; }
+
+
+        /* แอนิเมชันพัลส์สำหรับรูปภาพ (สามารถรวมกับ fadeIn) */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(59, 130, 246, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
+        .animated-photo-pulse {
+            animation: fadeIn 0.8s ease-out forwards, pulse 2s infinite ease-in-out;
+            animation-delay: 0.3s; /* หน่วงเวลาสำหรับ fade-in */
+            opacity: 0; /* เริ่มต้นซ่อนสำหรับ fade-in */
+        }
+
+        /* เลื่อนเข้าจากซ้ายอย่างนุ่มนวลสำหรับบล็อกเนื้อหา */
+        @keyframes slideInFromLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .animated-slide-in-left {
+            animation: slideInFromLeft 0.8s ease-out forwards;
+            opacity: 0; /* เริ่มต้นซ่อน */
+        }
+
+        /* เลื่อนเข้าจากขวาอย่างนุ่มนวลสำหรับบล็อกเนื้อหา */
+        @keyframes slideInFromRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .animated-slide-in-right {
+            animation: slideInFromRight 0.8s ease-out forwards;
+            opacity: 0; /* เริ่มต้นซ่อน */
+        }
+
+        /* เลื่อนเข้าจากด้านล่างอย่างนุ่มนวล */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animated-slide-in-up {
+            animation: slideInUp 0.8s ease-out forwards;
+            opacity: 0; /* เริ่มต้นซ่อน */
+        }
+
+        /* SVG Specific Styling */
+        .force-svg-container {
+            background-color: #fcfcfc; /* พื้นหลังสีขาวสะอาดสำหรับ SVG */
+            border: 1px solid #E0E7FF; /* ขอบสีฟ้าอ่อน */
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Custom Modal Styling */
+        .custom-modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.5); /* สีพื้นหลัง Modal */
+        }
+        .custom-modal-content {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            max-width: 400px;
+            width: 90%;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .modal-button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+        .modal-button-primary {
+            background-color: #3B82F6;
+            color: white;
+        }
+        .modal-button-primary:hover {
+            background-color: #2563EB;
+            transform: translateY(-1px);
+        }
+        .modal-button-secondary {
+            background-color: #E5E7EB; /* สีเทาอ่อน */
+            color: #4B5563; /* สีเทาเข้ม */
+        }
+        .modal-button-secondary:hover {
+            background-color: #D1D5DB;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <!-- แถบนำทาง -->
+    <!-- คลาส "fixed top-0 w-full z-50" ช่วยให้แถบนำทางยังคงมองเห็นได้ที่ด้านบนแม้ในขณะเลื่อน -->
+    <nav class="bg-white shadow-lg py-4 fixed top-0 w-full z-50">
+        <div class="container flex justify-center space-x-6">
+            <a href="index.html" class="nav-link text-gray-700 font-semibold active">หน้าแรก</a>
+            <a href="manual.html" class="nav-link text-gray-700 font-semibold">คู่มือการใช้งาน</a>
+            <a href="simulation.html" class="nav-link text-gray-700 font-semibold">การจำลองแรงลัพธ์</a>
+        </div>
+    </nav>
+
+    <div class="container mt-20"> <!-- เพิ่ม mt-20 เพื่อรองรับแถบนำทางแบบ fixed -->
+
+        <!-- ส่วนที่ 1: หน้าแรกและข้อมูลทั่วไป -->
+        <section id="home" class="section">
+            <h1 class="section-header animated-header">ยินดีต้อนรับสู่เว็บไซต์การศึกษาเรื่อง "แรงลัพธ์"</h1>
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-10">
+                <div class="md:w-1/3 flex flex-col items-center animated-slide-in-left animated-delay-1">
+                    <!-- องค์ประกอบรูปภาพที่จะแสดงรูปภาพของผู้ใช้ -->
+                    <!-- src ถูกตั้งค่าเป็นไฟล์รูปภาพที่ให้มา -->
+                    <img id="userPhoto" src="uploaded:รูป.jpg-3a120588-52b8-4771-a4a0-53aac6c4c561" alt="รูปเจ้าของเว็บไซต์" class="rounded-full w-48 h-48 object-cover shadow-lg clickable-photo animated-photo-pulse">
+                    <!-- ช่องป้อนไฟล์ที่ซ่อนอยู่สำหรับการอัปโหลดรูปภาพ -->
+                    <input type="file" id="photoUpload" accept="image/png, image/jpeg" class="hidden">
+                    <p class="mt-4 text-center text-lg font-semibold text-gray-700 animated-fade-in animated-delay-2">ครูกันต์พัฒน์ เกตุนิ่ม</p>
+                    <p class="text-center text-sm text-gray-500 animated-fade-in animated-delay-3">ผู้พัฒนาเว็บไซต์</p>
+                </div>
+                <div class="md:w-2/3 text-lg text-gray-700 animated-slide-in-right animated-delay-4">
+                    <p class="mb-4 animated-fade-in animated-delay-5">เว็บไซต์นี้ถูกสร้างขึ้นเพื่อเป็นแหล่งเรียนรู้เกี่ยวกับ <strong class="text-blue-600">แรงลัพธ์</strong> และการเคลื่อนที่ของวัตถุ ผ่านการจำลองเชิงปฏิสัมพันธ์ (Interactive Simulation) ที่ออกแบบมาให้นักเรียนเข้าใจหลักการทางฟิสิกส์ได้อย่างง่ายดายและสนุกสนาน</p>
+                    <p class="mb-4 animated-fade-in animated-delay-6">คุณจะได้เรียนรู้และทดลองด้วยตัวเองในหัวข้อต่างๆ ดังนี้:</p>
+                    <ul class="list-disc list-inside space-y-2 animated-fade-in animated-delay-7">
+                        <li><strong class="text-purple-600">แนวคิดพื้นฐานของแรงและแรงลัพธ์:</strong> ทำความเข้าใจว่าแรงคืออะไร และการรวมกันของแรงส่งผลต่อวัตถุอย่างไร</li>
+                        <li><strong class="text-purple-600">แรงสมดุลและไม่สมดุล:</strong> สังเกตความแตกต่างระหว่างสถานการณ์ที่แรงกระทำต่อวัตถุอยู่ในสภาวะสมดุลและไม่สมดุล</li>
+                        <li><strong class="text-purple-600">การคำนวณแรงลัพธ์:</strong> ฝึกคำนวณหาค่าแรงลัพธ์จากสถานการณ์ต่างๆ และดูผลลัพธ์ทันที</li>
+                        <li><strong class="text-purple-600">การจำลองการดึงเชือกแบบ 3 มิติ:</strong> สัมผัสประสบการณ์การเรียนรู้ที่สมจริงด้วยการจำลองการดึงเชือกที่สามารถปรับเปลี่ยนตัวแปรต่างๆ ได้</li>
+                        <li><strong class="text-purple-600">แบบทดสอบความเข้าใจ:</strong> ทดสอบความรู้ของคุณหลังจากการเรียนรู้และทดลอง</li>
+                    </ul>
+                    <p class="mt-4 animated-fade-in animated-delay-8">เราหวังว่าเว็บไซต์นี้จะเป็นเครื่องมือที่มีประโยชน์ในการส่งเสริมการเรียนรู้ฟิสิกส์ของคุณ!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ส่วนที่ 2: สรุปเนื้อหาเรื่องแรงลัพธ์ -->
+        <section id="net-force-summary" class="section">
+            <h2 class="section-header animated-header animated-delay-9">สรุปเนื้อหาเรื่อง "แรงลัพธ์"</h2>
+            <div class="text-lg text-gray-700 animated-fade-in animated-delay-10">
+                <p class="mb-4">แรงลัพธ์ (Net Force) คือ ผลรวมของแรงหลาย ๆ แรงที่มากระทำต่อวัตถุเดียวกัน อาจจะเป็นการรวมแบบบวก แบบลบ หรือแบบหักล้างกันก็ได้ ขึ้นอยู่กับทิศทางและขนาดของแรงที่มากระทำต่อวัตถุนั้น</p>
+                
+                <div class="flex justify-center my-6 animated-fade-in animated-delay-11 force-svg-container">
+                    <svg viewBox="0 0 400 200" width="100%" height="auto" class="w-full md:max-w-md rounded-lg shadow-md">
+                        <rect x="150" y="50" width="100" height="100" fill="#DBEEFF" stroke="#1E40AF" stroke-width="2" rx="8"/>
+                        <!-- Right Force -->
+                        <line x1="250" y1="100" x2="350" y2="100" stroke="#3B82F6" stroke-width="4" marker-end="url(#arrowhead)"/>
+                        <text x="295" y="90" font-family="Kanit, sans-serif" font-size="16" fill="#1D4ED8" text-anchor="middle">F1</text>
+                        <!-- Left Force -->
+                        <line x1="150" y1="100" x2="50" y2="100" stroke="#EF4444" stroke-width="4" marker-end="url(#arrowhead)"/>
+                        <text x="105" y="90" font-family="Kanit, sans-serif" font-size="16" fill="#DC2626" text-anchor="middle">F2</text>
+                        <!-- Up Force -->
+                        <line x1="200" y1="50" x2="200" y2="10" stroke="#22C55E" stroke-width="4" marker-end="url(#arrowhead)"/>
+                        <text x="210" y="30" font-family="Kanit, sans-serif" font-size="16" fill="#16A34A" text-anchor="start">F3</text>
+                        <!-- Down Force -->
+                        <line x1="200" y1="150" x2="200" y2="190" stroke="#F59E0B" stroke-width="4" marker-end="url(#arrowhead)"/>
+                        <text x="210" y="170" font-family="Kanit, sans-serif" font-size="16" fill="#D97706" text-anchor="start">F4</text>
+                        <!-- Arrowhead definition -->
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="context-stroke" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+
+                <h3 class="text-2xl font-semibold text-blue-700 mb-3 animated-slide-in-up animated-delay-12">ความสำคัญของแรงลัพธ์</h3>
+                <p class="mb-4 animated-slide-in-up animated-delay-13">แรงลัพธ์เป็นตัวกำหนดว่าวัตถุจะมีการเปลี่ยนแปลงการเคลื่อนที่หรือไม่</p>
+                <ul class="list-disc list-inside space-y-2 mb-4 animated-slide-in-up animated-delay-14">
+                    <li><strong class="text-green-600">ถ้าแรงลัพธ์เป็นศูนย์ (Net Force = 0):</strong> วัตถุจะรักษาสภาพการเคลื่อนที่เดิมไว้ นั่นคือ ถ้าวัตถุหยุดนิ่งก็จะยังคงหยุดนิ่งต่อไป หรือถ้ากำลังเคลื่อนที่ด้วยความเร็วคงที่ก็จะเคลื่อนที่ด้วยความเร็วคงที่ต่อไป (ตามกฎการเคลื่อนที่ข้อที่หนึ่งของนิวตัน)</li>
+                    <li><strong class="text-red-600">ถ้าแรงลัพธ์ไม่เป็นศูนย์ (Net Force ≠ 0):</strong> วัตถุจะมีการเปลี่ยนแปลงการเคลื่อนที่ เช่น เปลี่ยนความเร็ว (เพิ่มขึ้นหรือลดลง) หรือเปลี่ยนทิศทาง ซึ่งหมายถึงวัตถุจะมีความเร่ง (ตามกฎการเคลื่อนที่ข้อที่สองของนิวตัน)</li>
+                </ul>
+                
+                <div class="flex justify-center my-6 animated-fade-in animated-delay-15 force-svg-container">
+                    <svg viewBox="0 0 400 200" width="100%" height="auto" class="w-full md:max-w-md rounded-lg shadow-md">
+                        <rect x="150" y="50" width="100" height="100" fill="#D1FAE5" stroke="#047857" stroke-width="2" rx="8"/>
+                        <!-- Left Force (50 units) -->
+                        <line x1="150" y1="100" x2="100" y2="100" stroke="#059669" stroke-width="4" marker-end="url(#arrowhead)"/>
+                        <text x="125" y="90" font-family="Kanit, sans-serif" font-size="16" fill="#065F46" text-anchor="middle">5N</text>
+                        <!-- Right Force (50 units) -->
+                        <line x1="250" y1="100" x2="300" y2="100" stroke="#059669" stroke-width="4" marker-end="url(#arrowhead)"/>
+                        <text x="275" y="90" font-family="Kanit, sans-serif" font-size="16" fill="#065F46" text-anchor="middle">5N</text>
+                        <!-- Arrowhead definition -->
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="context-stroke" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+
+                <h3 class="text-2xl font-semibold text-blue-700 mb-3 animated-slide-in-up animated-delay-16">การหาแรงลัพธ์เบื้องต้น</h3>
+                <ul class="list-disc list-inside space-y-2 mb-4 animated-slide-in-up animated-delay-17">
+                    <li><strong class="text-purple-600">แรงที่กระทำในทิศทางเดียวกัน:</strong> ให้นำขนาดของแรงทั้งหมดมารวมกัน และทิศทางของแรงลัพธ์จะอยู่ในทิศทางเดียวกันกับแรงเหล่านั้น
+                        <p class="ml-6 text-sm italic text-gray-600 mt-1">ตัวอย่าง: แรง 5 นิวตันไปทางขวา และแรง 3 นิวตันไปทางขวา จะได้แรงลัพธ์ 8 นิวตันไปทางขวา</p>
+                        <div class="flex justify-center my-4 animated-fade-in animated-delay-18 force-svg-container">
+                            <svg viewBox="0 0 300 150" width="100%" height="auto" class="w-full md:max-w-xs rounded-lg shadow-sm">
+                                <rect x="100" y="40" width="100" height="70" fill="#FFFBEB" stroke="#FACC15" stroke-width="2" rx="6"/>
+                                <!-- Force 1 (5N) -->
+                                <line x1="100" y1="75" x2="150" y2="75" stroke="#F97316" stroke-width="4" marker-end="url(#arrowhead)"/>
+                                <text x="125" y="65" font-family="Kanit, sans-serif" font-size="14" fill="#EA580C" text-anchor="middle">5N</text>
+                                <!-- Force 2 (3N) -->
+                                <line x1="150" y1="75" x2="180" y2="75" stroke="#F97316" stroke-width="4" marker-end="url(#arrowhead)"/>
+                                <text x="165" y="65" font-family="Kanit, sans-serif" font-size="14" fill="#EA580C" text-anchor="middle">3N</text>
+                                <!-- Arrowhead definition -->
+                                <defs>
+                                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                        <polygon points="0 0, 10 3.5, 0 7" fill="context-stroke" />
+                                    </marker>
+                                </defs>
+                            </svg>
+                        </div>
+                    </li>
+                    <li><strong class="text-purple-600">แรงที่กระทำในทิศทางตรงกันข้าม:</strong> ให้นำขนาดของแรงทั้งสองมาลบกัน โดยแรงลัพธ์จะมีทิศทางเดียวกับแรงที่มีขนาดมากกว่า
+                        <p class="ml-6 text-sm italic text-gray-600 mt-1">ตัวอย่าง: แรง 10 นิวตันไปทางขวา และแรง 4 นิวตันไปทางซ้าย จะได้แรงลัพธ์ 6 นิวตันไปทางขวา</p>
+                        <div class="flex justify-center my-4 animated-fade-in animated-delay-19 force-svg-container">
+                            <svg viewBox="0 0 300 150" width="100%" height="auto" class="w-full md:max-w-xs rounded-lg shadow-sm">
+                                <rect x="100" y="40" width="100" height="70" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" rx="6"/>
+                                <!-- Right Force (10N) -->
+                                <line x1="100" y1="75" x2="200" y2="75" stroke="#B91C1C" stroke-width="4" marker-end="url(#arrowhead)"/>
+                                <text x="150" y="65" font-family="Kanit, sans-serif" font-size="14" fill="#991B1B" text-anchor="middle">10N</text>
+                                <!-- Left Force (4N) -->
+                                <line x1="100" y1="75" x2="60" y2="75" stroke="#B91C1C" stroke-width="4" marker-end="url(#arrowhead)"/>
+                                <text x="80" y="65" font-family="Kanit, sans-serif" font-size="14" fill="#991B1B" text-anchor="middle">4N</text>
+                                <!-- Arrowhead definition -->
+                                <defs>
+                                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                        <polygon points="0 0, 10 3.5, 0 7" fill="context-stroke" />
+                                    </marker>
+                                </defs>
+                            </svg>
+                        </div>
+                    </li>
+                    <li><strong class="text-purple-600">แรงที่กระทำต่อวัตถุมากกว่าสองแรง และอยู่ในแนวเส้นตรงเดียวกัน:</strong> ให้รวมแรงในทิศทางเดียวกันก่อน แล้วจึงนำแรงที่อยู่ในทิศทางตรงข้ามมาลบกัน
+                        <p class="ml-6 text-sm italic text-gray-600 mt-1">ตัวอย่าง: แรง 5 นิวตันไปทางขวา, แรง 2 นิวตันไปทางขวา และแรง 6 นิวตันไปทางซ้าย<br>แรงไปทางขวารวมกันได้ 5+2=7 นิวตัน<br>แรงลัพธ์คือ 7−6=1 นิวตัน ไปทางขวา</p>
+                        <div class="flex justify-center my-4 animated-fade-in animated-delay-20 force-svg-container">
+                            <svg viewBox="0 0 300 150" width="100%" height="auto" class="w-full md:max-w-xs rounded-lg shadow-sm">
+                                <rect x="100" y="40" width="100" height="70" fill="#EEF2FF" stroke="#4F46E5" stroke-width="2" rx="6"/>
+                                <!-- Right Force 1 (5N) -->
+                                <line x1="100" y1="65" x2="150" y2="65" stroke="#4338CA" stroke-width="4" marker-end="url(#arrowhead)"/>
+                                <text x="125" y="55" font-family="Kanit, sans-serif" font-size="14" fill="#312E81" text-anchor="middle">5N</text>
+                                <!-- Right Force 2 (2N) -->
+                                <line x1="150" y1="65" x2="170" y2="65" stroke="#4338CA" stroke-width="4" marker-end="url(#arrowhead)"/>
+                                <text x="160" y="55" font-family="Kanit, sans-serif" font-size="14" fill="#312E81" text-anchor="middle">2N</text>
+                                <!-- Left Force (6N) -->
+                                <line x1="100" y1="95" x2="40" y2="95" stroke="#EF4444" stroke-width="4" marker-end="url(#arrowhead)"/>
+                                <text x="70" y="85" font-family="Kanit, sans-serif" font-size="14" fill="#DC2626" text-anchor="middle">6N</text>
+                                <!-- Arrowhead definition -->
+                                <defs>
+                                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                        <polygon points="0 0, 10 3.5, 0 7" fill="context-stroke" />
+                                    </marker>
+                                </defs>
+                            </svg>
+                        </div>
+                    </li>
+                </ul>
+                <p class="mt-6 text-center text-blue-700 font-semibold animated-fade-in animated-delay-21">หวังว่าสรุปนี้จะช่วยให้เข้าใจเรื่องแรงลัพธ์ได้ง่ายขึ้นนะครับ!</p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Custom Modal HTML -->
+    <div id="customModal" class="fixed inset-0 custom-modal-backdrop flex items-center justify-center z-50 hidden">
+        <div class="custom-modal-content">
+            <h3 id="modalTitle" class="text-xl font-bold mb-4 text-blue-700"></h3>
+            <p id="modalMessage" class="mb-6 text-gray-700"></p>
+            <input type="password" id="modalInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 mb-4 hidden text-gray-800" placeholder="กรุณาใส่รหัสผ่าน">
+            <div class="flex justify-end space-x-3">
+                <button id="modalConfirmBtn" class="modal-button modal-button-primary">ยืนยัน</button>
+                <button id="modalCancelBtn" class="modal-button modal-button-secondary">ยกเลิก</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // รับการอ้างอิงถึงองค์ประกอบรูปภาพและช่องป้อนไฟล์
+        const userPhoto = document.getElementById('userPhoto');
+        const photoUpload = document.getElementById('photoUpload');
+        // กำหนด PIN สำหรับนักพัฒนา - **กรุณาเปลี่ยนเป็น PIN ที่คุณต้องการ!**
+        const DEVELOPER_PIN = "241324kks"; 
+
+        // แฟล็กเพื่อติดตามว่าโหมดนักพัฒนาทำงานอยู่หรือไม่
+        let isDeveloperMode = false; 
+
+        // Modal Elements
+        const customModal = document.getElementById('customModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalInput = document.getElementById('modalInput');
+        const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+        const modalCancelBtn = document.getElementById('modalCancelBtn');
+
+        /**
+         * ฟังก์ชันสำหรับแสดง Custom Modal (แทน alert/prompt)
+         * @param {string} title - หัวข้อของ Modal
+         * @param {string} message - ข้อความภายใน Modal
+         * @param {boolean} [isPrompt=false] - กำหนดว่า Modal เป็นแบบรับข้อมูลหรือไม่
+         * @param {function} [callback=null] - ฟังก์ชันที่จะเรียกใช้เมื่อ Modal ปิด
+         */
+        function showModal(title, message, isPrompt = false, callback = null) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+
+            if (isPrompt) {
+                modalInput.value = ''; // ล้างค่า input เก่า
+                modalInput.classList.remove('hidden');
+                modalCancelBtn.classList.remove('hidden'); // แสดงปุ่มยกเลิกสำหรับ prompt
+            } else {
+                modalInput.classList.add('hidden');
+                modalCancelBtn.classList.add('hidden'); // ซ่อนปุ่มยกเลิกสำหรับ alert
+            }
+
+            customModal.classList.remove('hidden'); // แสดง Modal
+
+            // ลบตัวฟังเหตุการณ์เก่าเพื่อป้องกันการซ้ำซ้อน
+            modalConfirmBtn.onclick = null;
+            modalCancelBtn.onclick = null;
+
+            modalConfirmBtn.onclick = () => {
+                customModal.classList.add('hidden'); // ซ่อน Modal
+                const inputValue = isPrompt ? modalInput.value : true; // ส่งค่า input หรือ true ถ้าเป็น alert
+                if (callback) callback(inputValue);
+            };
+
+            if (isPrompt) { // ถ้าเป็น prompt ให้เพิ่ม event listener สำหรับปุ่มยกเลิก
+                modalCancelBtn.onclick = () => {
+                    customModal.classList.add('hidden'); // ซ่อน Modal
+                    if (callback) callback(false); // ระบุว่าถูกยกเลิก
+                };
+            }
+        }
+
+
+        /**
+         * ฟังก์ชันเพื่อเปิดใช้งานการอัปโหลดรูปภาพ
+         */
+        function enableImageUpload() {
+            // เพิ่มคลาส 'enabled' เพื่อเปลี่ยนเคอร์เซอร์และเอฟเฟกต์โฮเวอร์
+            userPhoto.classList.add('enabled'); 
+            // เพิ่มตัวฟังเหตุการณ์คลิกให้กับรูปภาพเพื่อเรียกใช้ช่องป้อนไฟล์
+            // ไม่ต้องเพิ่มซ้ำ เพราะ handlePhotoClick ถูกเพิ่มไปแล้ว
+            console.log("Developer mode enabled: Image upload is active.");
+        }
+
+        /**
+         * ฟังก์ชันเพื่อปิดใช้งานการอัปโหลดรูปภาพ
+         */
+        function disableImageUpload() {
+            // ลบคลาส 'enabled'
+            userPhoto.classList.remove('enabled');
+            // ลบตัวฟังเหตุการณ์คลิก
+            // ไม่ต้องลบ เพราะ handlePhotoClick เป็นตัวจัดการหลัก
+            console.log("Developer mode disabled: Image upload is inactive.");
+        }
+
+        /**
+         * ฟังก์ชันจัดการการคลิกที่รูปภาพ
+         */
+        function handlePhotoClick() {
+            if (isDeveloperMode) {
+                // หากอยู่ในโหมดนักพัฒนา ให้คลิกช่องป้อนไฟล์โดยตรง
+                photoUpload.click(); 
+            } else {
+                // หากไม่ได้อยู่ในโหมดนักพัฒนา ให้พร้อมท์ขอ PIN โดยใช้ Custom Modal
+                showModal("แก้ไขรูปภาพ", "กรุณาใส่รหัสผ่านเพื่อแก้ไขรูปภาพ:", true, (pin) => {
+                    if (pin === DEVELOPER_PIN) {
+                        isDeveloperMode = true;
+                        enableImageUpload();
+                        showModal("สำเร็จ", "เข้าสู่โหมดผู้พัฒนาแล้ว คุณสามารถเปลี่ยนรูปภาพได้");
+                        photoUpload.click(); // เปิดช่องป้อนไฟล์ทันทีหลังจากเข้าสู่ระบบสำเร็จ
+                    } else if (pin !== false) { // pin ไม่ใช่ false (หมายถึงมีการยืนยัน แต่รหัสผ่านไม่ถูกต้อง)
+                        showModal("ข้อผิดพลาด", "รหัสผ่านไม่ถูกต้อง");
+                    }
+                    // หาก pin เป็น false (หมายถึงคลิกยกเลิก) ไม่ต้องทำอะไร
+                });
+            }
+        }
+
+        // เพิ่มตัวฟังเหตุการณ์คลิกให้กับรูปภาพ ซึ่งจะเรียกใช้ `handlePhotoClick` เสมอ
+        // ซึ่งจากนั้นจะตรวจสอบ `isDeveloperMode`
+        userPhoto.addEventListener('click', handlePhotoClick);
+
+        // เพิ่มตัวฟังเหตุการณ์ change ให้กับช่องป้อนไฟล์เพื่อจัดการไฟล์ที่เลือก
+        photoUpload.addEventListener('change', (event) => {
+            const file = event.target.files[0]; // รับไฟล์แรกที่เลือก
+
+            if (file) {
+                // สร้างออบเจกต์ FileReader เพื่ออ่านเนื้อหาของไฟล์
+                const reader = new FileReader();
+
+                // เมื่อ reader โหลดไฟล์เสร็จ ให้ตั้งค่าแหล่งที่มารูปภาพ
+                reader.onload = (e) => {
+                    userPhoto.src = e.target.result; // ตั้งค่า src ของแท็ก img เป็น Data URL
+                    localStorage.setItem('userPhotoDataURL', e.target.result); // บันทึกไปยัง localStorage
+                };
+
+                // อ่านไฟล์เป็น Data URL (สตริงที่เข้ารหัส base64)
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // โหลดรูปภาพจาก localStorage เมื่อ DOM โหลดเสร็จสมบูรณ์
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedPhotoDataURL = localStorage.getItem('userPhotoDataURL');
+            if (savedPhotoDataURL) {
+                userPhoto.src = savedPhotoDataURL;
+            }
+            // ปิดใช้งานการอัปโหลดรูปภาพในตอนแรก เว้นแต่จะเปิดใช้งานโหมดนักพัฒนา
+            disableImageUpload(); 
+        });
+    </script>
+</body>
+</html>
