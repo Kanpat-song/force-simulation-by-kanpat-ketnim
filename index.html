@@ -202,44 +202,6 @@
             align-items: center;
             overflow: hidden;
         }
-
-        /* Custom Modal Styling (No longer used as upload is removed) */
-        /*
-        .custom-modal-backdrop {
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-        .custom-modal-content {
-            background-color: #ffffff;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            max-width: 400px;
-            width: 90%;
-            animation: fadeIn 0.3s ease-out;
-        }
-        .modal-button {
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.1s ease;
-        }
-        .modal-button-primary {
-            background-color: #3B82F6;
-            color: white;
-        }
-        .modal-button-primary:hover {
-            background-color: #2563EB;
-            transform: translateY(-1px);
-        }
-        .modal-button-secondary {
-            background-color: #E5E7EB;
-            color: #4B5563;
-        }
-        .modal-button-secondary:hover {
-            background-color: #D1D5DB;
-            transform: translateY(-1px);
-        }
-        */
     </style>
 </head>
 <body>
@@ -261,9 +223,12 @@
             <div class="flex flex-col md:flex-row items-center md:items-start gap-10">
                 <div class="md:w-1/3 flex flex-col items-center animated-slide-in-left animated-delay-1">
                     <!-- Image element to display the user's photo -->
-                    <!-- The src is set to the provided image file directly -->
-                    <img id="userPhoto" src="uploaded:ทะเล2.jpg-eaba7e35-c7f9-46bb-8a29-dcd78621577b" alt="รูปเจ้าของเว็บไซต์" class="rounded-full w-48 h-48 object-cover shadow-lg animated-photo-pulse">
-                    <!-- The hidden file input for photo upload and its related JS have been removed. -->
+                    <!-- Updated src with the new ImgBB direct image URL and added onerror for fallback -->
+                    <img id="userPhoto" 
+                         src="https://i.ibb.co/KxXKSK6W/2.jpg" 
+                         alt="รูปเจ้าของเว็บไซต์" 
+                         class="rounded-full w-48 h-48 object-cover shadow-lg animated-photo-pulse"
+                         onerror="this.onerror=null; this.src='https://placehold.co/192x192/007bff/ffffff?text=Image+Not+Found';">
                     <p class="mt-4 text-center text-lg font-semibold text-gray-700 animated-fade-in animated-delay-2">ครูกันต์พัฒน์ เกตุนิ่ม</p>
                     <p class="text-center text-sm text-gray-500 animated-fade-in animated-delay-3">ผู้พัฒนาเว็บไซต์</p>
                 </div>
@@ -408,21 +373,6 @@
         </section>
 
     </div>
-
-    <!-- Custom Modal HTML (removed as upload functionality is removed) -->
-    <!--
-    <div id="customModal" class="fixed inset-0 custom-modal-backdrop flex items-center justify-center z-50 hidden">
-        <div class="custom-modal-content">
-            <h3 id="modalTitle" class="text-xl font-bold mb-4 text-blue-700"></h3>
-            <p id="modalMessage" class="mb-6 text-gray-700"></p>
-            <input type="password" id="modalInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 mb-4 hidden text-gray-800" placeholder="กรุณาใส่รหัสผ่าน">
-            <div class="flex justify-end space-x-3">
-                <button id="modalConfirmBtn" class="modal-button modal-button-primary">ยืนยัน</button>
-                <button id="modalCancelBtn" class="modal-button modal-button-secondary">ยกเลิก</button>
-            </div>
-        </div>
-    </div>
-    -->
 
     <script>
         // Removed all JavaScript related to image upload, local storage, and developer mode.
