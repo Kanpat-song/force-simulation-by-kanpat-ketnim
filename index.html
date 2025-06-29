@@ -50,13 +50,13 @@
             position: relative;
             padding-bottom: 15px;
         }
-        /* สไตล์สำหรับพื้นที่รูปภาพที่สามารถคลิกได้ */
+        /* สไตล์สำหรับพื้นที่รูปภาพที่สามารถคลิกได้ (เดิม) */
         .clickable-photo {
             cursor: default; /* เคอร์เซอร์เริ่มต้นเมื่อไม่ได้เปิดใช้งาน */
             border: 4px solid #3B82F6; /* สีน้ำเงินหลัก */
             transition: border-color 0.3s ease, transform 0.3s ease; /* เพิ่ม transform สำหรับแอนิเมชันเมื่อโฮเวอร์ */
         }
-        .clickable-photo.enabled { /* คลาสใหม่เมื่อเปิดใช้งานการอัปโหลด */
+        .clickable-photo.enabled { /* คลาสใหม่เมื่อเปิดใช้งานการอัปโหลด (เดิม) */
             cursor: pointer; /* เปลี่ยนเคอร์เซอร์เป็น pointer สำหรับการอัปโหลด */
         }
         .clickable-photo.enabled:hover {
@@ -203,9 +203,10 @@
             overflow: hidden;
         }
 
-        /* Custom Modal Styling */
+        /* Custom Modal Styling (No longer used as upload is removed) */
+        /*
         .custom-modal-backdrop {
-            background-color: rgba(0, 0, 0, 0.5); /* สีพื้นหลัง Modal */
+            background-color: rgba(0, 0, 0, 0.5);
         }
         .custom-modal-content {
             background-color: #ffffff;
@@ -231,18 +232,19 @@
             transform: translateY(-1px);
         }
         .modal-button-secondary {
-            background-color: #E5E7EB; /* สีเทาอ่อน */
-            color: #4B5563; /* สีเทาเข้ม */
+            background-color: #E5E7EB;
+            color: #4B5563;
         }
         .modal-button-secondary:hover {
             background-color: #D1D5DB;
             transform: translateY(-1px);
         }
+        */
     </style>
 </head>
 <body>
-    <!-- แถบนำทาง -->
-    <!-- คลาส "fixed top-0 w-full z-50" ช่วยให้แถบนำทางยังคงมองเห็นได้ที่ด้านบนแม้ในขณะเลื่อน -->
+    <!-- Navigation Bar -->
+    <!-- The "fixed top-0 w-full z-50" classes ensure the navigation bar remains visible at the top even when scrolling. -->
     <nav class="bg-white shadow-lg py-4 fixed top-0 w-full z-50">
         <div class="container flex justify-center space-x-6">
             <a href="index.html" class="nav-link text-gray-700 font-semibold active">หน้าแรก</a>
@@ -251,18 +253,17 @@
         </div>
     </nav>
 
-    <div class="container mt-20"> <!-- เพิ่ม mt-20 เพื่อรองรับแถบนำทางแบบ fixed -->
+    <div class="container mt-20"> <!-- Added mt-20 to accommodate the fixed navigation bar -->
 
-        <!-- ส่วนที่ 1: หน้าแรกและข้อมูลทั่วไป -->
+        <!-- Section 1: Homepage and General Information -->
         <section id="home" class="section">
             <h1 class="section-header animated-header">ยินดีต้อนรับสู่เว็บไซต์การศึกษาเรื่อง "แรงลัพธ์"</h1>
             <div class="flex flex-col md:flex-row items-center md:items-start gap-10">
                 <div class="md:w-1/3 flex flex-col items-center animated-slide-in-left animated-delay-1">
-                    <!-- องค์ประกอบรูปภาพที่จะแสดงรูปภาพของผู้ใช้ -->
-                    <!-- src ถูกตั้งค่าเป็นไฟล์รูปภาพที่ให้มา -->
-                    <img id="userPhoto" src="uploaded:รูป.jpg-3a120588-52b8-4771-a4a0-53aac6c4c561" alt="รูปเจ้าของเว็บไซต์" class="rounded-full w-48 h-48 object-cover shadow-lg clickable-photo animated-photo-pulse">
-                    <!-- ช่องป้อนไฟล์ที่ซ่อนอยู่สำหรับการอัปโหลดรูปภาพ -->
-                    <input type="file" id="photoUpload" accept="image/png, image/jpeg" class="hidden">
+                    <!-- Image element to display the user's photo -->
+                    <!-- The src is set to the provided image file directly -->
+                    <img id="userPhoto" src="uploaded:ทะเล2.jpg-eaba7e35-c7f9-46bb-8a29-dcd78621577b" alt="รูปเจ้าของเว็บไซต์" class="rounded-full w-48 h-48 object-cover shadow-lg animated-photo-pulse">
+                    <!-- The hidden file input for photo upload and its related JS have been removed. -->
                     <p class="mt-4 text-center text-lg font-semibold text-gray-700 animated-fade-in animated-delay-2">ครูกันต์พัฒน์ เกตุนิ่ม</p>
                     <p class="text-center text-sm text-gray-500 animated-fade-in animated-delay-3">ผู้พัฒนาเว็บไซต์</p>
                 </div>
@@ -281,7 +282,7 @@
             </div>
         </section>
 
-        <!-- ส่วนที่ 2: สรุปเนื้อหาเรื่องแรงลัพธ์ -->
+        <!-- Section 2: Summary of Net Force Content -->
         <section id="net-force-summary" class="section">
             <h2 class="section-header animated-header animated-delay-9">สรุปเนื้อหาเรื่อง "แรงลัพธ์"</h2>
             <div class="text-lg text-gray-700 animated-fade-in animated-delay-10">
@@ -408,7 +409,8 @@
 
     </div>
 
-    <!-- Custom Modal HTML -->
+    <!-- Custom Modal HTML (removed as upload functionality is removed) -->
+    <!--
     <div id="customModal" class="fixed inset-0 custom-modal-backdrop flex items-center justify-center z-50 hidden">
         <div class="custom-modal-content">
             <h3 id="modalTitle" class="text-xl font-bold mb-4 text-blue-700"></h3>
@@ -420,143 +422,11 @@
             </div>
         </div>
     </div>
+    -->
 
     <script>
-        // รับการอ้างอิงถึงองค์ประกอบรูปภาพและช่องป้อนไฟล์
-        const userPhoto = document.getElementById('userPhoto');
-        const photoUpload = document.getElementById('photoUpload');
-        // กำหนด PIN สำหรับนักพัฒนา - **กรุณาเปลี่ยนเป็น PIN ที่คุณต้องการ!**
-        const DEVELOPER_PIN = "241324kks"; 
-
-        // แฟล็กเพื่อติดตามว่าโหมดนักพัฒนาทำงานอยู่หรือไม่
-        let isDeveloperMode = false; 
-
-        // Modal Elements
-        const customModal = document.getElementById('customModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalMessage = document.getElementById('modalMessage');
-        const modalInput = document.getElementById('modalInput');
-        const modalConfirmBtn = document.getElementById('modalConfirmBtn');
-        const modalCancelBtn = document.getElementById('modalCancelBtn');
-
-        /**
-         * ฟังก์ชันสำหรับแสดง Custom Modal (แทน alert/prompt)
-         * @param {string} title - หัวข้อของ Modal
-         * @param {string} message - ข้อความภายใน Modal
-         * @param {boolean} [isPrompt=false] - กำหนดว่า Modal เป็นแบบรับข้อมูลหรือไม่
-         * @param {function} [callback=null] - ฟังก์ชันที่จะเรียกใช้เมื่อ Modal ปิด
-         */
-        function showModal(title, message, isPrompt = false, callback = null) {
-            modalTitle.textContent = title;
-            modalMessage.textContent = message;
-
-            if (isPrompt) {
-                modalInput.value = ''; // ล้างค่า input เก่า
-                modalInput.classList.remove('hidden');
-                modalCancelBtn.classList.remove('hidden'); // แสดงปุ่มยกเลิกสำหรับ prompt
-            } else {
-                modalInput.classList.add('hidden');
-                modalCancelBtn.classList.add('hidden'); // ซ่อนปุ่มยกเลิกสำหรับ alert
-            }
-
-            customModal.classList.remove('hidden'); // แสดง Modal
-
-            // ลบตัวฟังเหตุการณ์เก่าเพื่อป้องกันการซ้ำซ้อน
-            modalConfirmBtn.onclick = null;
-            modalCancelBtn.onclick = null;
-
-            modalConfirmBtn.onclick = () => {
-                customModal.classList.add('hidden'); // ซ่อน Modal
-                const inputValue = isPrompt ? modalInput.value : true; // ส่งค่า input หรือ true ถ้าเป็น alert
-                if (callback) callback(inputValue);
-            };
-
-            if (isPrompt) { // ถ้าเป็น prompt ให้เพิ่ม event listener สำหรับปุ่มยกเลิก
-                modalCancelBtn.onclick = () => {
-                    customModal.classList.add('hidden'); // ซ่อน Modal
-                    if (callback) callback(false); // ระบุว่าถูกยกเลิก
-                };
-            }
-        }
-
-
-        /**
-         * ฟังก์ชันเพื่อเปิดใช้งานการอัปโหลดรูปภาพ
-         */
-        function enableImageUpload() {
-            // เพิ่มคลาส 'enabled' เพื่อเปลี่ยนเคอร์เซอร์และเอฟเฟกต์โฮเวอร์
-            userPhoto.classList.add('enabled'); 
-            // เพิ่มตัวฟังเหตุการณ์คลิกให้กับรูปภาพเพื่อเรียกใช้ช่องป้อนไฟล์
-            // ไม่ต้องเพิ่มซ้ำ เพราะ handlePhotoClick ถูกเพิ่มไปแล้ว
-            console.log("Developer mode enabled: Image upload is active.");
-        }
-
-        /**
-         * ฟังก์ชันเพื่อปิดใช้งานการอัปโหลดรูปภาพ
-         */
-        function disableImageUpload() {
-            // ลบคลาส 'enabled'
-            userPhoto.classList.remove('enabled');
-            // ลบตัวฟังเหตุการณ์คลิก
-            // ไม่ต้องลบ เพราะ handlePhotoClick เป็นตัวจัดการหลัก
-            console.log("Developer mode disabled: Image upload is inactive.");
-        }
-
-        /**
-         * ฟังก์ชันจัดการการคลิกที่รูปภาพ
-         */
-        function handlePhotoClick() {
-            if (isDeveloperMode) {
-                // หากอยู่ในโหมดนักพัฒนา ให้คลิกช่องป้อนไฟล์โดยตรง
-                photoUpload.click(); 
-            } else {
-                // หากไม่ได้อยู่ในโหมดนักพัฒนา ให้พร้อมท์ขอ PIN โดยใช้ Custom Modal
-                showModal("แก้ไขรูปภาพ", "กรุณาใส่รหัสผ่านเพื่อแก้ไขรูปภาพ:", true, (pin) => {
-                    if (pin === DEVELOPER_PIN) {
-                        isDeveloperMode = true;
-                        enableImageUpload();
-                        showModal("สำเร็จ", "เข้าสู่โหมดผู้พัฒนาแล้ว คุณสามารถเปลี่ยนรูปภาพได้");
-                        photoUpload.click(); // เปิดช่องป้อนไฟล์ทันทีหลังจากเข้าสู่ระบบสำเร็จ
-                    } else if (pin !== false) { // pin ไม่ใช่ false (หมายถึงมีการยืนยัน แต่รหัสผ่านไม่ถูกต้อง)
-                        showModal("ข้อผิดพลาด", "รหัสผ่านไม่ถูกต้อง");
-                    }
-                    // หาก pin เป็น false (หมายถึงคลิกยกเลิก) ไม่ต้องทำอะไร
-                });
-            }
-        }
-
-        // เพิ่มตัวฟังเหตุการณ์คลิกให้กับรูปภาพ ซึ่งจะเรียกใช้ `handlePhotoClick` เสมอ
-        // ซึ่งจากนั้นจะตรวจสอบ `isDeveloperMode`
-        userPhoto.addEventListener('click', handlePhotoClick);
-
-        // เพิ่มตัวฟังเหตุการณ์ change ให้กับช่องป้อนไฟล์เพื่อจัดการไฟล์ที่เลือก
-        photoUpload.addEventListener('change', (event) => {
-            const file = event.target.files[0]; // รับไฟล์แรกที่เลือก
-
-            if (file) {
-                // สร้างออบเจกต์ FileReader เพื่ออ่านเนื้อหาของไฟล์
-                const reader = new FileReader();
-
-                // เมื่อ reader โหลดไฟล์เสร็จ ให้ตั้งค่าแหล่งที่มารูปภาพ
-                reader.onload = (e) => {
-                    userPhoto.src = e.target.result; // ตั้งค่า src ของแท็ก img เป็น Data URL
-                    localStorage.setItem('userPhotoDataURL', e.target.result); // บันทึกไปยัง localStorage
-                };
-
-                // อ่านไฟล์เป็น Data URL (สตริงที่เข้ารหัส base64)
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // โหลดรูปภาพจาก localStorage เมื่อ DOM โหลดเสร็จสมบูรณ์
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedPhotoDataURL = localStorage.getItem('userPhotoDataURL');
-            if (savedPhotoDataURL) {
-                userPhoto.src = savedPhotoDataURL;
-            }
-            // ปิดใช้งานการอัปโหลดรูปภาพในตอนแรก เว้นแต่จะเปิดใช้งานโหมดนักพัฒนา
-            disableImageUpload(); 
-        });
+        // Removed all JavaScript related to image upload, local storage, and developer mode.
+        // The image is now directly embedded in the HTML.
     </script>
 </body>
 </html>
